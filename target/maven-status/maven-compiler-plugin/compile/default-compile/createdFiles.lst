@@ -1,1 +1,8 @@
+proj\repository\InMemoryUserRepository.class
+proj\repository\UserRepository.class
+proj\domain\User.class
+proj\controller\UserController$GreetingController.class
+proj\controller\UserController.class
+proj\service\UserServiceImpl.class
 proj\App.class
+proj\service\UserService.class
