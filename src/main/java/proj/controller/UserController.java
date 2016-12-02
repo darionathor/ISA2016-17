@@ -2,43 +2,89 @@ package proj.controller;
 
 import java.util.Collection;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
 import proj.domain.User;
 import proj.service.UserService;
 
-@Controller
-@RequestMapping("/users")
+@RestController
 public class UserController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @RequestMapping("/api")
+    public String welcome() {//Welcome page, non-rest
+        return "Welcome to RestTemplate Example.";
+    }
 	@Autowired
 	private UserService userService;
 
-	@GetMapping
-	public ModelAndView getGreetings() {
+	@RequestMapping(
+			value = "/api/users",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Collection<User>> getUsers() {
 		logger.info("> getUser");
 
 		Collection<User> user= userService.findAll();
 
 		logger.info("< getUser");
-		return new ModelAndView("list", "user", user);
+		return new ResponseEntity<Collection<User>>(user,
+				HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value = "/api/users",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> createUser(
+			@RequestBody User user) throws Exception {
+		logger.info("> createGreeting");
+		User saveduser = userService.create(user);
+		logger.info("< createGreeting");
+		return new ResponseEntity<User>(saveduser, HttpStatus.CREATED);
+	}
+
+	@RequestMapping(
+			value = "/api/users/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> updateGreeting(
+			@RequestBody User user) throws Exception {
+		logger.info("> updateUser id:{}", user.getId());
+		User updatedUser = userService.update(user);
+		if (updatedUser== null) {
+			return new ResponseEntity<User>(
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		logger.info("< updateUser id:{}", user.getId());
+		return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value = "/api/user/{id}",
+			method = RequestMethod.DELETE)
+	public ResponseEntity<User> deleteUser(
+			@PathVariable("id") Long id) {
+		logger.info("> deleteUser id:{}", id);
+		userService.delete(id);
+		logger.info("< deleteUser id:{}", id);
+		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 	}
 	
+	/*
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getNew(Model model) {
 		model.addAttribute("user", new User());
@@ -87,6 +133,6 @@ public class UserController {
 	public String foo() {
 		throw new RuntimeException("Exception u kontroleru");
 	}
-
+*/
 }
 

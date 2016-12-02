@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        
 <title>Greetings : View all</title>
 </head>
 <body>
+<script>
+$(document).ready(function() {
+	$.getJSON( "api/users", function( data ) {
+		  var items = [];
+		  $.each( data, function( key, val ) {
+		    items.push( "<li id='" + key + "'>" + val + "</li>" );
+		  });
+});	  
+});
+</script>
 	<div id="greetings">
 		<table>
 			<tr>
@@ -14,19 +23,9 @@
 				<th>password</th>
 				<th></th>
 			</tr>
-			<c:forEach items="${users}"  var="user">
 				<tr>	
-					<td><c:out value="${user.id}"/></td>				
-					<td><c:out value="${user.username}"/></td>	
-					<td><c:out value="${user.password}"/></td>
-					<td><a href="<c:url value="/users/update/${user.id}"/>">Update</a></td>
-					<td><a href="<c:url value="/users/delete/${user.id}"/>">Delete</a></td>
 				</tr>
-			</c:forEach>
 		</table>
 	</div>	
-	<div id="newUser">
-		<a href="<c:url value="/users/new"/>">Create new user</a>
-	</div>
 </body>
 </html>
