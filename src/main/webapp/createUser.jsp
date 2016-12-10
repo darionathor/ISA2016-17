@@ -10,6 +10,7 @@
 		<form id="formUser" action="api/users" method="post">
 			<fieldset>
 				<input type="text" path="id" />
+				<input type="email" path="email" />
 				<label path="username">Username </label>
 				<input type="text" path="username" />
 				<label path="password">password </label>

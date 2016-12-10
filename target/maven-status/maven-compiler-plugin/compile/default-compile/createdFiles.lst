@@ -1,7 +1,6 @@
-proj\repository\InMemoryUserRepository.class
-proj\repository\UserRepository.class
-proj\domain\User.class
-proj\controller\UserController.class
-proj\service\UserServiceImpl.class
-proj\App.class
-proj\service\UserService.class
+proj\beans\repository\UserRepository.class
+proj\beans\controller\UserController.class
+proj\beans\domain\User.class
+proj\beans\repository\InMemoryUserRepository.class
+proj\beans\service\UserService.class
+proj\beans\service\UserServiceImpl.class
