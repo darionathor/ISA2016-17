@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
+function submita(){
+		var a=$('#createMenadzer');
+	    console.log(a);
+		var o = {};
+	    var a = a.serializeArray();
+	    console.log(a);
+	    $.each(a, function() {
+	        if (o[this.name] !== undefined) {
+	            if (!o[this.name].push) {
+	                o[this.name] = [o[this.name]];
+	            }
+	            o[this.name].push(this.value || '');
+	        } else {
+	            o[this.name] = this.value || '';
+	        }
+	    });
+		console.log(a);
+		json=JSON.stringify(o);
+		console.log(json);
+		 $.ajax({
+		        type: "POST",
+		        url: "api/newMenadzerSistema",
+		        data: json,
+		        contentType: "application/json; charset=utf-8",
+		        dataType: "json",
+		        success: function(data){
+					 console.log(data);},
+		        failure: function(errMsg) {
+		            alert(errMsg);
+		        }
+		  });
+}
+
+</script>
+<title>NewMenadzerSistema</title>
+</head>
+<body>
+	<div>
+		<form id="createMenadzer" onsubmit='submita(); return false;'>
+			<fieldset>
+				<label>Email: </label>
+				<input type="email" path="email" name= "email"/>
+				<label path="username">Username </label>
+				<input type="text" id="username" name= "username"/>
+				<label path="password">password </label>
+				<input  type="password" id="password" name= "password"/>
+			 </fieldset>
+			<p>
+				<input type="submit" value="submit"></button>
+			</p>
+		</form>
+	</div>
+</body>
+</html>

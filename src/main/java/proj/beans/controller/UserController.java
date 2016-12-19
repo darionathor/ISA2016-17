@@ -1,6 +1,7 @@
 package proj.beans.controller;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import proj.beans.domain.User;
+import proj.beans.domain.UserType;
 import proj.beans.service.UserService;
 
 @RestController
@@ -83,7 +85,25 @@ public class UserController {
 		logger.info("< deleteUser id:{}", id);
 		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 	}
-	
+
+	@RequestMapping(
+			value = "/api/newMenadzerSistema",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> createNewMenadzerSistema(
+			@RequestBody User user) throws Exception {
+		logger.info("> createMenadzerSistema");
+		user.setType(UserType.MenadzerSistema);
+		Iterator<User> it = userService.findAll().iterator();
+		while(it.hasNext()){
+			if(it.next().getUsername().equals(user.getUsername()))
+					return new ResponseEntity<String>("exists",HttpStatus.CREATED);
+		}
+		userService.create(user);
+		logger.info("< createMenadzerSistema");
+		return new ResponseEntity<String>("done", HttpStatus.CREATED);
+	}
 	/*
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getNew(Model model) {

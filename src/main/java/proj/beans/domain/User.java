@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class User {
 	private Long id;
     
+	private UserType type;
     @NotEmpty(message = "Email je obavezan.")
     private String email;
 
@@ -47,4 +48,12 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
+	}
 }
