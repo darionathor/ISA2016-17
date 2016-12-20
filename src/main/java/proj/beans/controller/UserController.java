@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import proj.beans.domain.NewRestoranMessage;
+import proj.beans.domain.Restoran;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
+import proj.beans.service.RestoranService;
 import proj.beans.service.UserService;
 
 @RestController
@@ -31,6 +34,43 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+
+	@Autowired
+	private RestoranService restoranService;
+
+	@RequestMapping(
+			value = "/api/newRestoran",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String createNewMenadzerSistema(
+			@RequestBody NewRestoranMessage restoranMessage) throws Exception {
+		logger.info("> createRestoran");
+		User user = new User();
+		user.setType(UserType.MenadzerRestorana);
+		user.setEmail(restoranMessage.getEmail());
+		user.setUsername(restoranMessage.getUsername());
+		user.setPassword(restoranMessage.getPassword());
+		Iterator<User> it = userService.findAll().iterator();
+		while(it.hasNext()){
+			if(it.next().getUsername().equals(user.getUsername()))
+					return "existsMenadzer";
+		}
+		Iterator<Restoran> it2 = restoranService.findAll().iterator();
+		while(it2.hasNext()){
+			if(it2.next().getNaziv().equals(restoranMessage.getNaziv()))
+					return "existsRestoran";
+		}
+		
+		userService.create(user);
+		Restoran restoran=new Restoran();
+		restoran.setNaziv(restoranMessage.getNaziv());
+		restoranService.create(restoran);
+		
+		logger.info("< createRestoran");
+		return  "done";
+	}
+	
 	@RequestMapping(
 			value = "/api/users",
 			method = RequestMethod.GET,
@@ -90,19 +130,19 @@ public class UserController {
 			value = "/api/newMenadzerSistema",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> createNewMenadzerSistema(
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String createNewMenadzerSistema(
 			@RequestBody User user) throws Exception {
 		logger.info("> createMenadzerSistema");
 		user.setType(UserType.MenadzerSistema);
 		Iterator<User> it = userService.findAll().iterator();
 		while(it.hasNext()){
 			if(it.next().getUsername().equals(user.getUsername()))
-					return new ResponseEntity<String>("exists",HttpStatus.CREATED);
+					return "exists";
 		}
 		userService.create(user);
 		logger.info("< createMenadzerSistema");
-		return new ResponseEntity<String>("done", HttpStatus.CREATED);
+		return  "done";
 	}
 	/*
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
