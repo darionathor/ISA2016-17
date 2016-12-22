@@ -144,6 +144,25 @@ public class UserController {
 		logger.info("< createMenadzerSistema");
 		return  "done";
 	}
+	
+	@RequestMapping(
+			value = "/api/guestRegistration",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String guestRegistration(
+			@RequestBody User user) throws Exception {
+		logger.info("> guestRegistration");
+		user.setType(UserType.Gost);
+		Iterator<User> it = userService.findAll().iterator();
+		while(it.hasNext()){
+			if(it.next().getUsername().equals(user.getUsername()))
+					return "exists";
+		}
+		userService.create(user);
+		logger.info("< guestRegistration");
+		return  "done";
+	}
 	/*
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getNew(Model model) {

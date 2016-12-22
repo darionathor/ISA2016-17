@@ -12,6 +12,7 @@ public class User {
     private String username;
     @NotEmpty(message = "lozinka je obavezna.")
     private String password;
+    private String repeatedPassword;
 
     public User() {
 
@@ -31,6 +32,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
+
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
 	}
 
 	public Long getId() {
