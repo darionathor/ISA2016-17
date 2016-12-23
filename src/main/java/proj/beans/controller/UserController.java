@@ -3,6 +3,8 @@ package proj.beans.controller;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.Restoran;
@@ -148,21 +151,48 @@ public class UserController {
 	@RequestMapping(
 			value = "/api/guestRegistration",
 			method = RequestMethod.POST,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String guestRegistration(
-			@RequestBody User user) throws Exception {
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public RedirectView guestRegistration(
+			@RequestBody User user, HttpServletResponse response) throws Exception {
 		logger.info("> guestRegistration");
 		user.setType(UserType.Gost);
 		Iterator<User> it = userService.findAll().iterator();
 		while(it.hasNext()){
 			if(it.next().getUsername().equals(user.getUsername()))
-					return "exists";
+
+
+		        return new RedirectView("index.html", false);
 		}
+		
 		userService.create(user);
 		logger.info("< guestRegistration");
-		return  "done";
+
+        return new RedirectView("index.html",false);
 	}
+	
+
+	@RequestMapping(
+			value = "/api/guestLogin",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public RedirectView guestLogin(
+			@RequestBody User user, HttpServletResponse response) throws Exception {
+		
+		logger.info("> guestLogin");
+		user.setType(UserType.Gost);
+		Iterator<User> it = userService.findAll().iterator();
+		while(it.hasNext()){
+			if(it.next().getUsername().equals(user.getUsername()))
+
+
+		        return new RedirectView("index.html");
+		}
+		logger.info("< guestLogin");
+
+        return new RedirectView("index.html");
+	}
+	
+	
 	/*
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getNew(Model model) {
