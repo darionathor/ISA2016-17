@@ -73,6 +73,32 @@ public class UserController {
 		logger.info("< createRestoran");
 		return  "done";
 	}
+	@RequestMapping(
+			value = "/api/restorani",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Collection<Restoran>> getRestorans() {
+		logger.info("> getRestoran");
+
+		Collection<Restoran> restorani= restoranService.findAll();
+
+		logger.info("< getRestoran");
+		return new ResponseEntity<Collection<Restoran>>(restorani,
+				HttpStatus.OK);
+	}
+	@RequestMapping(
+			value = "/api/Restoran/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Restoran> getRestoran(@PathVariable("id") Long id) {
+		logger.info("> getRestoran");
+
+		Restoran restorani= restoranService.findOne(id);
+
+		logger.info("< getRestoran");
+		return new ResponseEntity<Restoran>(restorani,
+				HttpStatus.OK);
+	}
 	
 	@RequestMapping(
 			value = "/api/users",
