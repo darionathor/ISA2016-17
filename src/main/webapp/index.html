@@ -9,7 +9,7 @@ $(document).ready(function() {
 	$.getJSON( "api/restorani", function( data ) {
 		  var items = [];
 		  $.each( data, function( key, val ) {
-			  var s="<a href='Restoran/"+val.id+"'>"+val.naziv+"</a>";
+			  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+"</a>";
 			  console.log(s);
 			  var t=$.parseHTML(s);
 			  console.log(t);

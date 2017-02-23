@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>        
 <title>Restoran</title>
 </head>
 <body>
+<script>
+$(document).ready(function() {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+	console.log(qs);
+	$.getJSON( "api/Restoran/"+qs["id"], function( data ) {
+		console.log(data);
+			  document.title=data.naziv;
+		  });	  
+});
+</script>
 
 </body>
 </html>
