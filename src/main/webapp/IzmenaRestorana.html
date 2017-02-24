@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>        
+<title>Izmena restorana</title>
+</head>
+<body>
+<script>
+$(document).ready(function() {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+	console.log(qs);
+	$.getJSON( "api/Restoran/"+qs["id"], function( data ) {
+		console.log(data);
+			  document.title=data.naziv;
+			  $("#naziv").html=data.naziv;
+			  $("#vrstaRestorana").html=data.vrsta;
+		  });	  
+});
+</script>
+<h1 id="naziv"></h1>
+<div>
+	<p>Vrsta Restorana: </p>
+	<p id="vrstaRestorana"></p>
+</div>
+<div>
+	<table id="jelovnik">
+	</table>
+	<table id="kartaPica">
+	</table>
+</div>
+<div id="konfigSedenja"></div>
+<div id="linkovi">
+
+</div>
+</body>
+</html>

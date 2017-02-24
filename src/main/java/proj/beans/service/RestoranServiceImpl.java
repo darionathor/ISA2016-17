@@ -65,6 +65,7 @@ public class RestoranServiceImpl implements RestoranService{
 	            throw new Exception("Trazeni entitet nije pronadjen.");
 	        }
 	        restoranToUpdate.setNaziv(restoran.getNaziv());
+	        restoranToUpdate.setVrsta(restoran.getVrsta());
 	        
 	        Restoran updatedRestoran= restoranRepository.create(restoranToUpdate);
 	        logger.info("< update id:{}", restoran.getId());

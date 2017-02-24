@@ -20,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.Restoran;
+import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
 import proj.beans.service.RestoranService;
@@ -98,6 +99,40 @@ public class UserController {
 		logger.info("< getRestoran");
 		return new ResponseEntity<Restoran>(restorani,
 				HttpStatus.OK);
+	}
+	@RequestMapping(
+			value = "/api/RestoranNaziv/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String updateRestoranNaziv(@RequestBody StringMessage noviNaziv,@PathVariable("id") Long id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviNaziv);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		restoran.setNaziv(noviNaziv.getString());
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranOpis/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String updateRestoranOpis(@RequestBody StringMessage noviOpis,@PathVariable("id") Long id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		restoran.setVrsta(noviOpis.getString());
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
 	}
 	
 	@RequestMapping(

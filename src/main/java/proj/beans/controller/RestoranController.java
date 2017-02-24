@@ -24,5 +24,5 @@ public class RestoranController {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	//TODO preseliti kod iz userControllera ovde.
-
+	
 }
