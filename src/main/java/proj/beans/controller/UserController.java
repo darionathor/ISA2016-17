@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import proj.beans.domain.Jelo;
+import proj.beans.domain.NewRadnikMessage;
 import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.Pice;
 import proj.beans.domain.Restoran;
@@ -72,6 +73,8 @@ public class UserController {
 		
 		userService.create(user);
 		Restoran restoran=new Restoran();
+		restoran.setMenadzer(user);
+		restoran.setRadnici(new ArrayList<User>());
 		restoran.setJelovnik(new ArrayList<Jelo>());
 		restoran.setKartaPica(new ArrayList<Pice>());
 		restoran.setNaziv(restoranMessage.getNaziv());
@@ -222,6 +225,59 @@ public class UserController {
 			return "error";
 		}
 		logger.info("< deletePice id:{}", idJela);
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranRadnikRegister/{id}",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String RestoranRadnikRegister(@RequestBody NewRadnikMessage message,@PathVariable("id") Long id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		User user= new User();
+		user.setEmail(message.getEmail());
+		user.setPassword("");
+		user.setRepeatedPassword("");
+		user.setUsername(message.getUsername());
+		user.setDatumRodjenja(message.getDatumRodjenja());
+		user.setKonfekcijskiBroj(message.getKonfekcijskiBroj());
+		user.setVelicinaObuce(message.getVelicinaObuce());
+		user.setIme(message.getIme());
+		user.setPrezime(message.getPrezime());
+		if(message.getVrsta().equals("konobar"))user.setType(UserType.Konobar);
+		if(message.getVrsta().equals("kuvar"))user.setType(UserType.Kuvar);
+		if(message.getVrsta().equals("sanker"))user.setType(UserType.Sanker);
+		
+		ResponseEntity<User> rs=createUser(user);
+		restoran.getRadnici().add(rs.getBody());
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		//novoJelo.setId();
+		Restoran updateRestoran=restoranService.update(restoran);
+		
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/Ponudjac",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String Ponudjac(@RequestBody NewRadnikMessage message) throws Exception {
+		//System.out.println(noviOpis);
+		User user= new User();
+		user.setEmail(message.getEmail());
+		user.setUsername(message.getUsername());
+		user.setPassword("");
+		user.setRepeatedPassword("");
+		user.setType(UserType.Ponudjac);
+		ResponseEntity<User> rs=createUser(user);
+		if (!rs.getStatusCode().equals(HttpStatus.CREATED)) {
+			return "error";
+		}
 		return "success";
 	}
 	

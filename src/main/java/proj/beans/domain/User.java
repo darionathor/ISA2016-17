@@ -13,8 +13,53 @@ public class User {
     @NotEmpty(message = "lozinka je obavezna.")
     private String password;
     private String repeatedPassword;
+	private String ime;
+	private String prezime;
+	private String datumRodjenja;
+	private int konfekcijskiBroj;
+	private int velicinaObuce;
 
-    public User() {
+    public String getIme() {
+		return ime;
+	}
+
+	public void setIme(String ime) {
+		this.ime = ime;
+	}
+
+	public String getPrezime() {
+		return prezime;
+	}
+
+	public void setPrezime(String prezime) {
+		this.prezime = prezime;
+	}
+
+	public String getDatumRodjenja() {
+		return datumRodjenja;
+	}
+
+	public void setDatumRodjenja(String datumRodjenja) {
+		this.datumRodjenja = datumRodjenja;
+	}
+
+	public int getKonfekcijskiBroj() {
+		return konfekcijskiBroj;
+	}
+
+	public void setKonfekcijskiBroj(int konfekcijskiBroj) {
+		this.konfekcijskiBroj = konfekcijskiBroj;
+	}
+
+	public int getVelicinaObuce() {
+		return velicinaObuce;
+	}
+
+	public void setVelicinaObuce(int velicinaObuce) {
+		this.velicinaObuce = velicinaObuce;
+	}
+
+	public User() {
 
     }
 

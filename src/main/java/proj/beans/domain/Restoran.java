@@ -7,6 +7,25 @@ public class Restoran {
 	private String Vrsta;
 	private ArrayList<Jelo> Jelovnik;
 	private ArrayList<Pice> KartaPica;
+	private User Menadzer;
+	private ArrayList<User> Radnici;
+	
+	public User getMenadzer() {
+		return Menadzer;
+	}
+
+	public void setMenadzer(User menadzer) {
+		Menadzer = menadzer;
+	}
+
+	public ArrayList<User> getRadnici() {
+		return Radnici;
+	}
+
+	public void setRadnici(ArrayList<User> radnici) {
+		Radnici = radnici;
+	}
+
 	public String getVrsta() {
 		return Vrsta;
 	}

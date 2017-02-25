@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Registracija zaposlenog</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+	$.fn.serializeObject = function() {
+		var o = {};
+		var a = this.serializeArray();
+		$.each(a, function() {
+			if (o[this.name] !== undefined) {
+				if (!o[this.name].push) {
+					o[this.name] = [ o[this.name] ];
+				}
+				o[this.name].push(this.value || '');
+			} else {
+				o[this.name] = this.value || '';
+			}
+		});
+		return o;
+	};
+	function submita() {
+		var qs = (function(a) {
+		    if (a == "") return {};
+		    var b = {};
+		    for (var i = 0; i < a.length; ++i)
+		    {
+		        var p=a[i].split('=', 2);
+		        if (p.length == 1)
+		            b[p[0]] = "";
+		        else
+		            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+		    }
+		    return b;
+		})(window.location.search.substr(1).split('&'));
+			var a = $('#unosProfila');
+			console.log(a);
+			var o = {};
+			var a = a.serializeArray();
+			console.log(a);
+			$.each(a, function() {
+				if (o[this.name] !== undefined) {
+					if (!o[this.name].push) {
+						o[this.name] = [ o[this.name] ];
+					}
+					o[this.name].push(this.value || '');
+				} else {
+					o[this.name] = this.value || '';
+				}
+			});
+			console.log(a);
+			json = JSON.stringify(o);
+			console.log(json);
+			$.ajax({
+				type : "POST",
+				url : "api/RestoranRadnikRegister/"+qs["id"],
+				data : json,
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+					alert(data);
+					console.log(data);
+				},
+				failure : function(errMsg) {
+					alert(errMsg);
+				}
+			});
+
+		
+	}
+
+	function validate() {
+
+	}
+</script>
+</head>
+<body>
+	<form id="unosProfila" onsubmit='submita(); return false;'>
+		<fieldset>
+			<label path="username">Username </label> 
+			<input type="text"
+				id="username" name="username" /> 
+			<label path="email">Email </label>
+			<input type="text" id="email" name="email" />
+			<label path="ime">Ime</label> 
+			<input type="text"
+				id="ime" name="ime" />
+			<label path="prezime">Prezime</label> 
+			<input type="text"
+				id="prezime" name="prezime" />
+			<label path="vrsta">vrsta</label> 
+			<select id="vrsta" name="vrsta">
+				<option value="konobar">Konobar</option>
+				<option value="kuvar">Kuvar</option>
+				<option value="sanker">Sanker</option>
+			</select> 
+			<label path="datumRodjenja">datum Rodjenja</label> 
+			<input type="date"
+				id="datumRodjenja" name="datumRodjenja" /> 
+			<label path="konfekcijskiBroj">Konfekcijski broj</label> 
+			<input type="number"
+				id="konfekcijskiBroj" name="konfekcijskiBroj" />  
+			<label path="velicinaObuce">Velicina Obuce</label> 
+			<input type="number"
+				id="velicinaObuce" name="velicinaObuce" />  
+		</fieldset>
+		<p>
+			<input type="submit" value="Register">
+		</p>
+	</form>
+</body>
+</html>
