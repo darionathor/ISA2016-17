@@ -10,9 +10,13 @@ $(document).ready(function() {
 	$.getJSON( "api/users", function( data ) {
 		  var items = [];
 		  $.each( data, function( key, val ) {
-		    items.push( "<li id='" + key + "'>" + val + "</li>" );
+		    items.push( "<tr><td id='" + val.id + "'>" + val.id + "</td>"+
+		    		"<td id='" + val.id + "'>" + val.username + "</td>"+
+		    		"<td id='" + val.id + "'>" + val.password + "</td></tr>");
+		    console.log(val);
 		  });
-});	  
+		  console.log(items);
+		  });	  
 });
 </script>
 	<div id="greetings">
@@ -23,8 +27,6 @@ $(document).ready(function() {
 				<th>password</th>
 				<th></th>
 			</tr>
-				<tr>	
-				</tr>
 		</table>
 	</div>	
 </body>

@@ -1,7 +1,9 @@
 package proj.beans.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import proj.beans.domain.Jelo;
 import proj.beans.domain.NewRestoranMessage;
+import proj.beans.domain.Pice;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
@@ -68,6 +72,8 @@ public class UserController {
 		
 		userService.create(user);
 		Restoran restoran=new Restoran();
+		restoran.setJelovnik(new ArrayList<Jelo>());
+		restoran.setKartaPica(new ArrayList<Pice>());
 		restoran.setNaziv(restoranMessage.getNaziv());
 		restoranService.create(restoran);
 		
@@ -132,6 +138,90 @@ public class UserController {
 			return "error";
 		}
 		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranDodajJelo/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String RestoranDodajJelo(@RequestBody Jelo novoJelo,@PathVariable("id") Long id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		//novoJelo.setId();
+		novoJelo.setId(new Random().nextLong()/1000);
+		restoran.getJelovnik().add(novoJelo);
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranObrisiJelo/{id}/{id2}",
+			method = RequestMethod.DELETE)
+	public String deleteJelo(
+			@PathVariable("id") Long id,@PathVariable("id2") Long idJela) throws Exception {
+		logger.info("> deleteJelo id:{}", idJela);
+		//System.out.println(idJela);
+		Restoran restoran=restoranService.findOne(id);
+		for(int i=0;i<restoran.getJelovnik().size();i++){
+			System.out.println(restoran.getJelovnik().get(i).getId());
+			if(idJela.equals(restoran.getJelovnik().get(i).getId())){
+				restoran.getJelovnik().remove(i);
+				logger.info("< true ");
+				break;
+			}
+		}
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< deleteJelo id:{}", idJela);
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranDodajPice/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String RestoranDodajPice(@RequestBody Pice novoJelo,@PathVariable("id") Long id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		//novoJelo.setId();
+		novoJelo.setId(new Random().nextLong()/1000);
+		restoran.getKartaPica().add(novoJelo);
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/RestoranObrisiPice/{id}/{id2}",
+			method = RequestMethod.DELETE)
+	public String deletePice(
+			@PathVariable("id") Long id,@PathVariable("id2") Long idJela) throws Exception {
+		logger.info("> deletePice id:{}", idJela);
+		//System.out.println(idJela);
+		Restoran restoran=restoranService.findOne(id);
+		for(int i=0;i<restoran.getKartaPica().size();i++){
+			System.out.println(restoran.getKartaPica().get(i).getId());
+			if(idJela.equals(restoran.getKartaPica().get(i).getId())){
+				restoran.getKartaPica().remove(i);
+				logger.info("< true ");
+				break;
+			}
+		}
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< deletePice id:{}", idJela);
 		return "success";
 	}
 	

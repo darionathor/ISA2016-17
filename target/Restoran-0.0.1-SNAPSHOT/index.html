@@ -1,5 +1,32 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>        
+<title>Index</title>
+</head>
 <body>
-<h2>Hello World!</h2>
+<script>
+$(document).ready(function() {
+	$.getJSON( "api/restorani", function( data ) {
+		  var items = [];
+		  $.each( data, function( key, val ) {
+			  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+"</a>";
+			  console.log(s);
+			  var t=$.parseHTML(s);
+			  console.log(t);
+			  $("#restorani").append(t);
+		  });
+		  console.log(items);
+		  });	  
+});
+</script>
+	<h2>Hello World!</h2>
+	<p> Linkovi:
+	<a href="guestLogin.jsp">Login</a>
+	<a href="list.jsp">lista korisnika</a>
+	<a href="MenadzerSistema.html">Menadzer sistema</a>
+	<a href="radniKalendarKonobara.html">Radni kalendar konobara</a>
+	<a href="rasporedStolova.html">Raspored stolova</a>
+	</p>
+	<p id="restorani">Restorani:</p>
 </body>
 </html>
