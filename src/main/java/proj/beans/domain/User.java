@@ -1,16 +1,18 @@
 package proj.beans.domain;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.Id;
 
 public class User {
-	private Long id;
+	@Id
+	private String id;
     
 	private UserType type;
-    @NotEmpty(message = "Email je obavezan.")
+   // @NotEmpty(message = "Email je obavezan.")
     private String email;
 
     private String username;
-    @NotEmpty(message = "lozinka je obavezna.")
+   // @NotEmpty(message = "lozinka je obavezna.")
     private String password;
     private String repeatedPassword;
 	private String ime;
@@ -87,11 +89,11 @@ public class User {
 		this.repeatedPassword = repeatedPassword;
 	}
 
-	public Long getId() {
+	public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

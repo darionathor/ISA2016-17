@@ -24,12 +24,12 @@ public class InMemoryRestoranRepository  implements RestoranRepository {
 	@Override
 	public Restoran create(Restoran restoran) {
 		// TODO Auto-generated method stub
-		Long id = restoran.getId();
+		/*Long id = restoran.getId();
 		if (id == null) {
 			id = counter.incrementAndGet();
 			restoran.setId(id);
 		}
-		this.restorani.put(id, restoran);
+		this.restorani.put(id, restoran);*/
 		return restoran;
 	}
 
@@ -42,10 +42,10 @@ public class InMemoryRestoranRepository  implements RestoranRepository {
 	@Override
 	public Restoran update(Restoran restoran) {
 		// TODO Auto-generated method stub
-		Long id = restoran.getId();
+		/*Long id = restoran.getId();
 		if (id != null) {
 			this.restorani.put(id, restoran);
-		}
+		}*/
 		return restoran;
 }
 	@Override

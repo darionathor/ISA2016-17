@@ -73,8 +73,8 @@ public class UserController {
 		
 		userService.create(user);
 		Restoran restoran=new Restoran();
-		restoran.setMenadzer(user);
-		restoran.setRadnici(new ArrayList<User>());
+		restoran.setMenadzer(user.getId());
+		restoran.setRadnici(new ArrayList<String>());
 		restoran.setJelovnik(new ArrayList<Jelo>());
 		restoran.setKartaPica(new ArrayList<Pice>());
 		restoran.setNaziv(restoranMessage.getNaziv());
@@ -100,7 +100,7 @@ public class UserController {
 			value = "/api/Restoran/{id}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Restoran> getRestoran(@PathVariable("id") Long id) {
+	public ResponseEntity<Restoran> getRestoran(@PathVariable("id") String id) {
 		logger.info("> getRestoran");
 
 		Restoran restorani= restoranService.findOne(id);
@@ -114,7 +114,7 @@ public class UserController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String updateRestoranNaziv(@RequestBody StringMessage noviNaziv,@PathVariable("id") Long id) throws Exception {
+	public String updateRestoranNaziv(@RequestBody StringMessage noviNaziv,@PathVariable("id") String id) throws Exception {
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviNaziv);
 		logger.info("> updateRestoran id:{}", restoran.getId());
@@ -131,7 +131,7 @@ public class UserController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String updateRestoranOpis(@RequestBody StringMessage noviOpis,@PathVariable("id") Long id) throws Exception {
+	public String updateRestoranOpis(@RequestBody StringMessage noviOpis,@PathVariable("id") String id) throws Exception {
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviOpis);
 		logger.info("> updateRestoran id:{}", restoran.getId());
@@ -148,7 +148,7 @@ public class UserController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String RestoranDodajJelo(@RequestBody Jelo novoJelo,@PathVariable("id") Long id) throws Exception {
+	public String RestoranDodajJelo(@RequestBody Jelo novoJelo,@PathVariable("id") String id) throws Exception {
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviOpis);
 		logger.info("> updateRestoran id:{}", restoran.getId());
@@ -166,7 +166,7 @@ public class UserController {
 			value = "/api/RestoranObrisiJelo/{id}/{id2}",
 			method = RequestMethod.DELETE)
 	public String deleteJelo(
-			@PathVariable("id") Long id,@PathVariable("id2") Long idJela) throws Exception {
+			@PathVariable("id") String id,@PathVariable("id2") Long idJela) throws Exception {
 		logger.info("> deleteJelo id:{}", idJela);
 		//System.out.println(idJela);
 		Restoran restoran=restoranService.findOne(id);
@@ -190,7 +190,7 @@ public class UserController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String RestoranDodajPice(@RequestBody Pice novoJelo,@PathVariable("id") Long id) throws Exception {
+	public String RestoranDodajPice(@RequestBody Pice novoJelo,@PathVariable("id") String id) throws Exception {
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviOpis);
 		logger.info("> updateRestoran id:{}", restoran.getId());
@@ -208,7 +208,7 @@ public class UserController {
 			value = "/api/RestoranObrisiPice/{id}/{id2}",
 			method = RequestMethod.DELETE)
 	public String deletePice(
-			@PathVariable("id") Long id,@PathVariable("id2") Long idJela) throws Exception {
+			@PathVariable("id") String id,@PathVariable("id2") Long idJela) throws Exception {
 		logger.info("> deletePice id:{}", idJela);
 		//System.out.println(idJela);
 		Restoran restoran=restoranService.findOne(id);
@@ -232,7 +232,7 @@ public class UserController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String RestoranRadnikRegister(@RequestBody NewRadnikMessage message,@PathVariable("id") Long id) throws Exception {
+	public String RestoranRadnikRegister(@RequestBody NewRadnikMessage message,@PathVariable("id") String id) throws Exception {
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviOpis);
 		User user= new User();
@@ -250,7 +250,7 @@ public class UserController {
 		if(message.getVrsta().equals("sanker"))user.setType(UserType.Sanker);
 		
 		ResponseEntity<User> rs=createUser(user);
-		restoran.getRadnici().add(rs.getBody());
+		restoran.getRadnici().add(rs.getBody().getId());
 		logger.info("> updateRestoran id:{}", restoran.getId());
 		//novoJelo.setId();
 		Restoran updateRestoran=restoranService.update(restoran);
@@ -329,7 +329,7 @@ public class UserController {
 			value = "/api/user/{id}",
 			method = RequestMethod.DELETE)
 	public ResponseEntity<User> deleteUser(
-			@PathVariable("id") Long id) {
+			@PathVariable("id") String id) {	
 		logger.info("> deleteUser id:{}", id);
 		userService.delete(id);
 		logger.info("< deleteUser id:{}", id);

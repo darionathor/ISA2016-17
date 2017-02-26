@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import proj.beans.domain.User;
 import proj.beans.repository.InMemoryUserRepository;
+import proj.beans.repository.MongoUserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,7 +17,8 @@ public class UserServiceImpl implements UserService {
 private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
-    private InMemoryUserRepository userRepository;
+    //private InMemoryUserRepository userRepository;
+    private MongoUserRepository userRepository;
 
 	@Override
 	public Collection<User> findAll() {
@@ -28,7 +30,7 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
 	}
 
 	@Override
-	public User findOne(Long id) {
+	public User findOne(String id) {
 		// TODO Auto-generated method stub
 		logger.info("> findOne id:{}", id);
 		User user = userRepository.findOne(id);
@@ -46,7 +48,7 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
             throw new Exception(
                     "Id mora biti null prilikom perzistencije novog entiteta.");
         }
-        User savedUser = userRepository.create(user);
+        User savedUser = userRepository.save(user);
         logger.info("< create");
         return savedUser;
 	}
@@ -64,13 +66,13 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
         userToUpdate.setPassword(user.getPassword());
         userToUpdate.setEmail(user.getEmail());
         
-        User updatedUser = userRepository.create(userToUpdate);
+        User updatedUser = userRepository.save(userToUpdate);
         logger.info("< update id:{}", user.getId());
         return updatedUser;
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void delete(String id) {
 		// TODO Auto-generated method stub
 		logger.info("> delete id:{}", id);
 		userRepository.delete(id);

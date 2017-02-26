@@ -11,6 +11,7 @@ import proj.beans.domain.Restoran;
 import proj.beans.domain.User;
 import proj.beans.repository.InMemoryRestoranRepository;
 import proj.beans.repository.InMemoryUserRepository;
+import proj.beans.repository.MongoRestoranRepository;
 
 @Service
 public class RestoranServiceImpl implements RestoranService{
@@ -19,8 +20,8 @@ public class RestoranServiceImpl implements RestoranService{
 		private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 		@Autowired
-	    private InMemoryRestoranRepository restoranRepository;
-
+	  //  private InMemoryRestoranRepository restoranRepository;
+		private MongoRestoranRepository restoranRepository;
 		@Override
 		public Collection<Restoran> findAll() {
 			// TODO Auto-generated method stub
@@ -31,7 +32,7 @@ public class RestoranServiceImpl implements RestoranService{
 		}
 
 		@Override
-		public Restoran findOne(Long id) {
+		public Restoran findOne(String id) {
 			// TODO Auto-generated method stub
 			logger.info("> findOne id:{}", id);
 			Restoran user = restoranRepository.findOne(id);
@@ -49,7 +50,7 @@ public class RestoranServiceImpl implements RestoranService{
 	            throw new Exception(
 	                    "Id mora biti null prilikom perzistencije novog entiteta.");
 	        }
-	        Restoran savedrestoran = restoranRepository.create(restoran);
+	        Restoran savedrestoran = restoranRepository.save(restoran);
 	        logger.info("< create");
 	        return savedrestoran;
 		}
@@ -69,13 +70,13 @@ public class RestoranServiceImpl implements RestoranService{
 	        restoranToUpdate.setJelovnik(restoran.getJelovnik());
 	        restoranToUpdate.setKartaPica(restoran.getKartaPica());
 	        
-	        Restoran updatedRestoran= restoranRepository.update(restoranToUpdate);
+	        Restoran updatedRestoran= restoranRepository.save(restoranToUpdate);
 	        logger.info("< update id:{}", restoran.getId());
 	        return updatedRestoran;
 		}
 
 		@Override
-		public void delete(Long id) {
+		public void delete(String id) {
 			// TODO Auto-generated method stub
 			logger.info("> delete id:{}", id);
 			restoranRepository.delete(id);

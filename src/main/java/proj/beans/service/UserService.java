@@ -7,11 +7,11 @@ import proj.beans.domain.User;
 public interface UserService {
 	Collection<User> findAll();
 
-	User findOne(Long id);
+	User findOne(String id);
 
 	User create(User user) throws Exception;
 
 	User update(User user) throws Exception;
 
-	void delete(Long id);
+	void delete(String id);
 }

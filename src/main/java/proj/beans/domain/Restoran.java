@@ -2,27 +2,29 @@ package proj.beans.domain;
 
 import java.util.ArrayList;
 
+import org.springframework.data.annotation.Id;
+
 public class Restoran {
 	private String Naziv;
 	private String Vrsta;
 	private ArrayList<Jelo> Jelovnik;
 	private ArrayList<Pice> KartaPica;
-	private User Menadzer;
-	private ArrayList<User> Radnici;
+	private String Menadzer;
+	private ArrayList<String> Radnici;
 	
-	public User getMenadzer() {
+	public String getMenadzer() {
 		return Menadzer;
 	}
 
-	public void setMenadzer(User menadzer) {
+	public void setMenadzer(String menadzer) {
 		Menadzer = menadzer;
 	}
 
-	public ArrayList<User> getRadnici() {
+	public ArrayList<String> getRadnici() {
 		return Radnici;
 	}
 
-	public void setRadnici(ArrayList<User> radnici) {
+	public void setRadnici(ArrayList<String> radnici) {
 		Radnici = radnici;
 	}
 
@@ -33,8 +35,8 @@ public class Restoran {
 	public void setVrsta(String vrsta) {
 		Vrsta = vrsta;
 	}
-
-	private Long id;
+	@Id
+	private String id;
 	public String getNaziv() {
 		return Naziv;
 	}
@@ -43,11 +45,11 @@ public class Restoran {
 		Naziv = naziv;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

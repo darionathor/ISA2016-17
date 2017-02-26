@@ -24,12 +24,12 @@ public class InMemoryUserRepository implements UserRepository  {
 	@Override
 	public User create(User user) {
 		// TODO Auto-generated method stub
-		Long id = user.getId();
+		/*Long id = user.getId();
 		if (id == null) {
 			id = counter.incrementAndGet();
 			user.setId(id);
 		}
-		this.users.put(id, user);
+		this.users.put(id, user);*/
 		return user;
 	}
 
@@ -42,10 +42,10 @@ public class InMemoryUserRepository implements UserRepository  {
 	@Override
 	public User update(User user) {
 		// TODO Auto-generated method stub
-		Long id = user.getId();
+		/*Long id = user.getId();
 		if (id != null) {
 			this.users.put(id, user);
-		}
+		}*/
 		return user;
 	}
 

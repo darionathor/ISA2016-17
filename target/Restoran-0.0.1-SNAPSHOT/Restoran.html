@@ -89,6 +89,129 @@ function izmeniNaziv() {
 
 function validate() {
 
+}function dodajJelo() {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+		var naziv=$("#nazivJelo").val();
+		var opis=$("#opisJelo").val();
+		var cena=$("#cenaJelo").val();
+		
+		var obj={"naziv":naziv,"opis":opis,"cena":cena};
+		console.log(obj);
+		$.ajax({
+			type : "PUT",
+			url : "api/RestoranDodajJelo/"+qs["id"],
+			data : JSON.stringify(obj),
+			contentType : "application/json; charset=utf-8",
+			dataType : "text",
+			success : function(data) {
+				console.log(data);
+			},
+			failure : function(errMsg) {
+				alert(errMsg);
+			}
+		});
+
+}function dodajPice() {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+		var naziv=$("#nazivPice").val();
+		var opis=$("#opisPice").val();
+		var cena=$("#cenaPice").val();
+		
+		var obj={"naziv":naziv,"opis":opis,"cena":cena};
+		console.log(obj);
+		$.ajax({
+			type : "PUT",
+			url : "api/RestoranDodajPice/"+qs["id"],
+			data : JSON.stringify(obj),
+			contentType : "application/json; charset=utf-8",
+			dataType : "text",
+			success : function(data) {
+				console.log(data);
+			},
+			failure : function(errMsg) {
+				alert(errMsg);
+			}
+		});
+
+
+}function obrisiJelo(id) {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+		
+		$.ajax({
+			type : "DELETE",
+			url : "api/RestoranObrisiJelo/"+qs["id"]+"/"+id,
+			dataType : "text",
+			success : function(data) {
+				console.log(data);
+			},
+			failure : function(errMsg) {
+				alert(errMsg);
+			}
+		});
+
+}function obrisiPice(id) {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+		
+		$.ajax({
+			type : "DELETE",
+			url : "api/RestoranObrisiPice/"+qs["id"]+"/"+id,
+			dataType : "text",
+			success : function(data) {
+				console.log(data);
+			},
+			failure : function(errMsg) {
+				alert(errMsg);
+			}
+		});
+
 }
 </script>
 </head>
@@ -130,11 +253,39 @@ $(document).ready(function() {
 					  $.parseHTML("<a href='statusPonuda.html?id="+qs["id"]+"'>status Ponuda</a><br />"));
 			  $("#linkovi").append(
 					  $.parseHTML("<a href='izvestajiRestorana.html?id="+qs["id"]+"'>izvestaji Restorana</a>"));
+			  $.each(data.jelovnik,function(key,val){
+			  
+			 	 $("#jelovnik").append(
+					  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
+					  "<button onclick='obrisiJelo("+val.id+")'>Obrisi</button></td></tr>"));
+			 	 
+			  }
+			  );
+			  $.each(data.kartaPica,function(key,val){
+				  
+				 	 $("#kartaPica").append(
+						  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
+						  "<button onclick='obrisiPice("+val.id+")'>Obrisi</button></td></tr>"));
+				 	 
+				  }
+				  );
 		  });
 	$("#nazivDiv").append(
 			$.parseHTML("<input type='text' id='poljeNaziv'></input><button onclick='izmeniNaziv()'>Izmeni</button>"));
 	$("#vrstaDiv").append(
 			$.parseHTML("<input type='text' id='poljeVrsta'></input><button onclick='izmeniVrstu()'>Izmeni</button>"));
+	$("#jelovnik").append(
+			$.parseHTML("<tr>"+
+			"<td><input type='text' id='nazivJelo'></input></td>"+
+			"<td><input type='text' id='opisJelo'></input></td>"+
+			"<td><input type='number' id='cenaJelo'></input></td>"+
+			"<td><button onclick='dodajJelo()'>Dodaj</button></td></tr>"));
+	$("#kartaPica").append(
+			$.parseHTML("<tr>"+
+			"<td><input type='text' id='nazivPice'></input></td>"+
+			"<td><input type='text' id='opisPice'></input></td>"+
+			"<td><input type='number' id='cenaPice'></input></td>"+
+			"<td><button onclick='dodajPice()'>Dodaj</button></td></tr>"));
 });
 </script>
 <div id="nazivDiv">
@@ -144,10 +295,21 @@ $(document).ready(function() {
 	<p>Vrsta Restorana: </p>
 	<p id="vrstaRestorana"></p>
 </div>
-<div>
+<div><p>Jelovnik</p>
 	<table id="jelovnik">
+		<tr>
+			<th>Naziv</th>
+			<th>Opis</th>
+			<th>Cena</th>
+		</tr>
 	</table>
+	<p>Karta Pica</p>
 	<table id="kartaPica">
+		<tr>
+			<th>Naziv</th>
+			<th>Opis</th>
+			<th>Cena</th>
+		</tr>
 	</table>
 </div>
 <div id="konfigSedenja"></div>

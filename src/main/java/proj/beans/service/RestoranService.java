@@ -9,11 +9,11 @@ public interface RestoranService {
 
 	Collection<Restoran> findAll();
 
-	Restoran findOne(Long id);
+	Restoran findOne(String id);
 
 	Restoran create(Restoran restoran) throws Exception;
 
 	Restoran update(Restoran restoran) throws Exception;
 
-	void delete(Long id);
+	void delete(String id);
 }
