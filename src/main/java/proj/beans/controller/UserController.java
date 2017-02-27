@@ -31,6 +31,7 @@ import proj.beans.domain.PonudaOutMessage;
 import proj.beans.domain.PonudaPica;
 import proj.beans.domain.PonudaPonudjaca;
 import proj.beans.domain.PonudaPonudjacaMessage;
+import proj.beans.domain.PonudaState;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
@@ -318,17 +319,56 @@ public class UserController {
 		return "success";
 	}
 	@RequestMapping(
+			value = "/api/prihvatiPonudu/{id}",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String prihvatiPonudu(@RequestBody StringMessage mess,@PathVariable("id") String id) throws Exception {
+		PonudaPonudjaca pon= ponudaPonudjacaService.findOne(mess.getString());
+		//System.out.println(noviOpis);
+		logger.info("> updatePonuda id:{}", pon.getId());
+		//novoJelo.setId();
+		Ponuda ponuda= ponudaService.findOne(pon.getPonuda());
+		ponuda.setPrihvacenaPonuda(pon.getId());
+		Ponuda updatePonuda=ponudaService.update(ponuda);
+		
+		pon.setStanje(PonudaState.accepted);
+		Collection<PonudaPonudjaca> ponkol= ponudaPonudjacaService.findAll();
+		for(PonudaPonudjaca p:ponkol){
+			if(p.getPonuda().equals(ponuda.getId())&& !p.getId().equals(pon.getId())){
+				p.setStanje(PonudaState.failed);
+				ponudaPonudjacaService.update(p);
+			}
+			
+		}
+		if (updatePonuda== null) {
+			return "error";
+		}
+		logger.info("< updatePonuda id:{}", pon.getId());
+		return "success";
+	}
+	@RequestMapping(
 			value = "/api/ponude/{id}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id) {
 		logger.info("> getRestoran");
-
+		Collection<PonudaPonudjaca> SveponudePon= ponudaPonudjacaService.findAll();
+		
 		Collection<Ponuda> Sveponude= ponudaService.findAll();
 		ArrayList<PonudaOutMessage> outmessagi= new ArrayList<PonudaOutMessage>();
 		Restoran restorani =restoranService.findOne(id);
 		for (Ponuda a : Sveponude){
-			if(a.getRestoran().equals(id))outmessagi.add(new PonudaOutMessage(a,restorani));
+			if(a.getRestoran().equals(id)){
+				PonudaOutMessage pom=new PonudaOutMessage(a,restorani);
+				
+				for(PonudaPonudjaca p:SveponudePon){
+					if(p.getPonuda().equals(a.getId())){
+						pom.getPonude().add(p);
+					}
+				}
+				outmessagi.add(pom);
+			}
 		}
 		
 		logger.info("< getRestoran");
@@ -377,7 +417,18 @@ public class UserController {
 			String idd=l.get(0);
 			String kol=l.get(1);
 			String cena=l.get(2);
-			
+			for(String st:ponuda.getJelo()){
+				if(st.equals(idd)){
+					pp.getpJela().add(new PonudaJela(idd,kol,cena));
+					break;
+				}
+			}
+			for(String st:ponuda.getPice()){
+				if(st.equals(idd)){
+					pp.getpPice().add(new PonudaPica(idd,kol,cena));
+					break;
+				}
+			}
 		}
 		PonudaPonudjaca updatePonuda=ponudaPonudjacaService.create(pp);
 		if (updatePonuda== null) {

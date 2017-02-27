@@ -66,6 +66,7 @@ public class PonudaPonudjacaServiceImpl implements PonudaPonudjacaService {
         restoranToUpdate.setPonudjac(restoran.getPonudjac());
         restoranToUpdate.setpJela(restoran.getpJela());
         restoranToUpdate.setpPice(restoran.getpPice());
+        restoranToUpdate.setStanje(restoran.getStanje());
         
         PonudaPonudjaca updatedRestoran= ponudaRepository.save(restoranToUpdate);
         logger.info("< update id:{}", restoran.getId());

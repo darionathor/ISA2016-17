@@ -67,7 +67,7 @@ public class PonudaServiceImpl implements PonudaService {
         restoranToUpdate.setJelo(restoran.getJelo());
         restoranToUpdate.setPice(restoran.getPice());
         restoranToUpdate.setRestoran(restoran.getRestoran());
-        
+        restoranToUpdate.setPrihvacenaPonuda(restoran.getPrihvacenaPonuda());
         Ponuda updatedRestoran= ponudaRepository.save(restoranToUpdate);
         logger.info("< update id:{}", restoran.getId());
         return updatedRestoran;

@@ -4,6 +4,12 @@ public class PonudaJela {
 	private String idJela;
 	private String kol;
 	private String cena;
+	public PonudaJela(String idJela, String kol, String cena) {
+		// TODO Auto-generated constructor stub
+		this.idJela=idJela;
+		this.kol=kol;
+		this.cena=kol;
+	}
 	public String getIdJela() {
 		return idJela;
 	}

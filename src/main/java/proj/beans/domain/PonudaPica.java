@@ -5,6 +5,12 @@ public class PonudaPica {
 	private String idPica;
 	private String kol;
 	private String cena;
+	public PonudaPica(String idPica, String kol, String cena) {
+		// TODO Auto-generated constructor stub
+		this.idPica=idPica;
+		this.kol=kol;
+		this.cena=cena;
+	}
 	public String getKol() {
 		return kol;
 	}

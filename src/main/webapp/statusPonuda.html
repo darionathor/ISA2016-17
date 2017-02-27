@@ -76,6 +76,40 @@
 		
 	}
 
+	function prihvati(id) {
+		var qs = (function(a) {
+		    if (a == "") return {};
+		    var b = {};
+		    for (var i = 0; i < a.length; ++i)
+		    {
+		        var p=a[i].split('=', 2);
+		        if (p.length == 1)
+		            b[p[0]] = "";
+		        else
+		            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+		    }
+		    return b;
+		})(window.location.search.substr(1).split('&'));
+			o={"string":id};
+			json = JSON.stringify(o);
+			console.log(json);
+			$.ajax({
+				type : "POST",
+				url : "api/prihvatiPonudu/"+qs["id"],
+				data : json,
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(data) {
+					alert(data);
+					console.log(data);
+				},
+				failure : function(errMsg) {
+					alert(errMsg);
+				}
+			});
+
+		
+	}
 	function validate() {
 
 	}
@@ -107,13 +141,26 @@ $(document).ready(function() {
 									  "<td>Do "+val.do+"</td>";
 					if(val.jelo!=null)
 						$.each(val.jelo,function(key2,val2){
-							string=string+"<td>"+val2.naziv+"</td>";
+							string=string+"<td colspan='2'>"+val2.naziv+"</td>";
 						});
 					if(val.pice!=null)
 					$.each(val.pice,function(key2,val2){
-						string=string+"<td>"+val2.naziv+"</td>";
+						string=string+"<td colspan='2'>"+val2.naziv+"</td>";
 					});
-					  string=string+"</tr></table>";
+					string=string+"</tr>";
+					$.each(val.ponude,function(key2,val2){
+						string=string+"<tr><td colspan='2'></td>";
+						$.each(val2.pJela,function(key3,val3){
+							string=string+"<td>"+val3.kol+"</td><td>"+val3.cena+"</td>";
+						})
+						$.each(val2.pPice,function(key3,val3){
+							string=string+"<td>"+val3.kol+"</td><td>"+val3.cena+"</td>";
+						})
+						if(!val.prihvacen)
+						string=string+"<td><button onclick=prihvati('"+val2.id+"')>Prihvati</button></button>";
+						string=string+"</tr>";
+					})
+					  string=string+"</table>";
 			  $("#tabele").append(
 					  $.parseHTML(string));
 			  }

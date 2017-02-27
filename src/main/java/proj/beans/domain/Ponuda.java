@@ -7,7 +7,8 @@ import org.springframework.data.annotation.Id;
 public class Ponuda {
 	@Id
 	private String id;
-	
+
+	private String prihvacenaPonuda;
 	private String Od;
 	private String Do;
 	private ArrayList<String> jelo;
@@ -54,6 +55,12 @@ public class Ponuda {
 	}
 	public void setPonudaPonudjaca(ArrayList<String> ponudaPonudjaca) {
 		this.ponudaPonudjaca = ponudaPonudjaca;
+	}
+	public String getPrihvacenaPonuda() {
+		return prihvacenaPonuda;
+	}
+	public void setPrihvacenaPonuda(String prihvacenaPonuda) {
+		this.prihvacenaPonuda = prihvacenaPonuda;
 	}
 	private String restoran;
 }

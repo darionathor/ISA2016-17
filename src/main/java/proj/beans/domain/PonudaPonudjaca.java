@@ -8,6 +8,7 @@ public class PonudaPonudjaca {
 	@Id
 	private String id;
 	
+	private PonudaState stanje;
 	private String Ponudjac;
 	public String getId() {
 		return id;
@@ -38,6 +39,12 @@ public class PonudaPonudjaca {
 	}
 	public void setpPice(ArrayList<PonudaPica> pPice) {
 		this.pPice = pPice;
+	}
+	public PonudaState getStanje() {
+		return stanje;
+	}
+	public void setStanje(PonudaState stanje) {
+		this.stanje = stanje;
 	}
 	private String Ponuda;
 	private ArrayList<PonudaJela> pJela;

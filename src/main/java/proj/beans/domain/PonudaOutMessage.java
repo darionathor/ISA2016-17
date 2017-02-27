@@ -10,10 +10,14 @@ public class PonudaOutMessage {
 	private String Do;
 	private ArrayList<Jelo> jelo;
 	private ArrayList<Pice> pice;
+	private boolean prihvacen;
 	public PonudaOutMessage(Ponuda a, Restoran restorani) {
+		if(a.getPrihvacenaPonuda()!=null)setPrihvacen(true);
+		else setPrihvacen(false);
 		id=a.getId();
 		Od=a.getOd();
 		Do=a.getDo();
+		ponude=new ArrayList<PonudaPonudjaca>();
 		restoran=restorani.getNaziv();
 		jelo=new ArrayList<Jelo>();
 		if(a.getJelo()!=null)
@@ -72,5 +76,18 @@ public class PonudaOutMessage {
 	public void setRestoran(String restoran) {
 		this.restoran = restoran;
 	}
+	public ArrayList<PonudaPonudjaca> getPonude() {
+		return ponude;
+	}
+	public void setPonude(ArrayList<PonudaPonudjaca> ponude) {
+		this.ponude = ponude;
+	}
+	public boolean isPrihvacen() {
+		return prihvacen;
+	}
+	public void setPrihvacen(boolean prihvacen) {
+		this.prihvacen = prihvacen;
+	}
 	private String restoran;
+	private ArrayList<PonudaPonudjaca> ponude;
 }
