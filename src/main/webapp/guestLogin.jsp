@@ -26,7 +26,7 @@ $.fn.serializeObject = function()
 };
 
 function submita(){
-		var a=$('#registerGost');
+		var a=$('#loginGost');
 	    console.log(a);
 		var o = {};
 	    var a = a.serializeArray();

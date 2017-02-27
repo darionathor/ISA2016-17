@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -630,20 +632,24 @@ public class UserController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public RedirectView guestLogin(
-			@RequestBody User user, HttpServletResponse response) throws Exception {
-		
+			@RequestBody User user, HttpServletResponse response,HttpSession session) throws Exception {
 		logger.info("> guestLogin");
 		user.setType(UserType.Gost);
 		Iterator<User> it = userService.findAll().iterator();
 		while(it.hasNext()){
-			if(it.next().getUsername().equals(user.getUsername()))
-
-
-		        return new RedirectView("index.html");
+			User use=it.next();
+			if(use.getUsername().equals(user.getUsername())){
+				if(use.getPassword().equals(user.getPassword())){
+					System.out.println("ziv je, ziiiiv");
+					session.setAttribute("user", use.getId());
+				}
+			}
+				
+			
 		}
 		logger.info("< guestLogin");
 
-        return new RedirectView("index.html");
+        return new RedirectView("");
 	}
 	
 	
