@@ -12,6 +12,7 @@ public class Ponuda {
 	private String Do;
 	private ArrayList<String> jelo;
 	private ArrayList<String> pice;
+	private ArrayList<String> ponudaPonudjaca;
 	public String getId() {
 		return id;
 	}
@@ -47,6 +48,12 @@ public class Ponuda {
 	}
 	public void setRestoran(String restoran) {
 		this.restoran = restoran;
+	}
+	public ArrayList<String> getPonudaPonudjaca() {
+		return ponudaPonudjaca;
+	}
+	public void setPonudaPonudjaca(ArrayList<String> ponudaPonudjaca) {
+		this.ponudaPonudjaca = ponudaPonudjaca;
 	}
 	private String restoran;
 }

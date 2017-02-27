@@ -1,14 +1,14 @@
 package proj.beans.domain;
 
 public class Pice {
-	private long id;
+	private String id;
 	private String naziv;
 	private String opis;
 	private float cena;
-	public long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getNaziv() {

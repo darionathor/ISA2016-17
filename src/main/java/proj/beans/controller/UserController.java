@@ -20,18 +20,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import proj.beans.domain.Jelo;
 import proj.beans.domain.NewRadnikMessage;
 import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.Pice;
 import proj.beans.domain.Ponuda;
+import proj.beans.domain.PonudaJela;
 import proj.beans.domain.PonudaMessage;
+import proj.beans.domain.PonudaOutMessage;
+import proj.beans.domain.PonudaPica;
+import proj.beans.domain.PonudaPonudjaca;
+import proj.beans.domain.PonudaPonudjacaMessage;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
+import proj.beans.service.PonudaPonudjacaService;
 import proj.beans.service.PonudaService;
 import proj.beans.service.RestoranService;
 import proj.beans.service.UserService;
@@ -53,6 +57,8 @@ public class UserController {
 	private RestoranService restoranService;
 	@Autowired
 	private PonudaService ponudaService;
+	@Autowired
+	private PonudaPonudjacaService ponudaPonudjacaService;
 
 	@RequestMapping(
 			value = "/api/newRestoran",
@@ -160,7 +166,7 @@ public class UserController {
 		//System.out.println(noviOpis);
 		logger.info("> updateRestoran id:{}", restoran.getId());
 		//novoJelo.setId();
-		novoJelo.setId(new Random().nextLong()/1000);
+		novoJelo.setId(Long.toString((new Random().nextLong()/1000)));
 		restoran.getJelovnik().add(novoJelo);
 		Restoran updateRestoran=restoranService.update(restoran);
 		if (updateRestoran== null) {
@@ -202,7 +208,7 @@ public class UserController {
 		//System.out.println(noviOpis);
 		logger.info("> updateRestoran id:{}", restoran.getId());
 		//novoJelo.setId();
-		novoJelo.setId(new Random().nextLong()/1000);
+		novoJelo.setId(Long.toString((new Random().nextLong()/1000)));
 		restoran.getKartaPica().add(novoJelo);
 		Restoran updateRestoran=restoranService.update(restoran);
 		if (updateRestoran== null) {
@@ -315,21 +321,71 @@ public class UserController {
 			value = "/api/ponude/{id}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<Ponuda>> getPonude(@PathVariable("id") String id) {
+	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id) {
 		logger.info("> getRestoran");
 
 		Collection<Ponuda> Sveponude= ponudaService.findAll();
-		Collection<Ponuda> restorani= ponudaService.findAll();
-		
+		ArrayList<PonudaOutMessage> outmessagi= new ArrayList<PonudaOutMessage>();
+		Restoran restorani =restoranService.findOne(id);
 		for (Ponuda a : Sveponude){
-			if(a.getRestoran().equals(id))restorani.add(a);
+			if(a.getRestoran().equals(id))outmessagi.add(new PonudaOutMessage(a,restorani));
 		}
 		
 		logger.info("< getRestoran");
-		return new ResponseEntity<Collection<Ponuda>>(restorani,
+		return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
 				HttpStatus.OK);
 	}
-	
+	@RequestMapping(
+			value = "/api/svePonude",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Collection<PonudaOutMessage>> getSvePonude() {
+		logger.info("> getRestoran");
+
+		Collection<Ponuda> Sveponude= ponudaService.findAll();
+		ArrayList<PonudaOutMessage> outmessagi= new ArrayList<PonudaOutMessage>();
+		Collection<Restoran> restorani =restoranService.findAll();
+		for (Ponuda a : Sveponude){
+			for(Restoran r: restorani){
+				if(a.getRestoran().equals(r.getId())){
+					outmessagi.add(new PonudaOutMessage(a,r));
+					break;
+				}
+			}
+		}
+		
+		logger.info("< getRestoran");
+		return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
+				HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value = "/api/ponudi/{id}",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String PonudjacObjaviPonudu(@RequestBody PonudaPonudjacaMessage ponudaMess,@PathVariable("id") String id) throws Exception {
+		Ponuda ponuda=ponudaService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> ponudiPonudu id:{}", ponuda.getId());
+		//novoJelo.setId();
+		PonudaPonudjaca pp= new PonudaPonudjaca();
+		pp.setPonuda(ponuda.getId());
+		pp.setpJela(new ArrayList<PonudaJela>());
+		pp.setpPice(new ArrayList<PonudaPica>());
+		for(ArrayList<String> l:ponudaMess.getIdArtikla()){
+			String idd=l.get(0);
+			String kol=l.get(1);
+			String cena=l.get(2);
+			
+		}
+		PonudaPonudjaca updatePonuda=ponudaPonudjacaService.create(pp);
+		if (updatePonuda== null) {
+			return "error";
+		}
+		logger.info("< ponudiPonudu id:{}", ponuda.getId());
+		return "success";
+	}
 	@RequestMapping(
 			value = "/api/users",
 			method = RequestMethod.GET,
