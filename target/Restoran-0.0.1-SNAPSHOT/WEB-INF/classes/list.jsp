@@ -15,12 +15,16 @@ $(document).ready(function() {
 		    		"<td id='" + val.id + "'>" + val.password + "</td></tr>");
 		    console.log(val);
 		  });
+		  $.each(items, function(key,val){
+			  $("#table").append($.parseHTML(val));
+			    
+		  });
 		  console.log(items);
 		  });	  
 });
 </script>
 	<div id="greetings">
-		<table>
+		<table id="table">
 			<tr>
 				<th>ID</th>
 				<th>username</th>

@@ -20,14 +20,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import proj.beans.domain.Jelo;
 import proj.beans.domain.NewRadnikMessage;
 import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.Pice;
+import proj.beans.domain.Ponuda;
+import proj.beans.domain.PonudaMessage;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
+import proj.beans.service.PonudaService;
 import proj.beans.service.RestoranService;
 import proj.beans.service.UserService;
 
@@ -46,6 +51,8 @@ public class UserController {
 
 	@Autowired
 	private RestoranService restoranService;
+	@Autowired
+	private PonudaService ponudaService;
 
 	@RequestMapping(
 			value = "/api/newRestoran",
@@ -279,6 +286,48 @@ public class UserController {
 			return "error";
 		}
 		return "success";
+	}
+	@RequestMapping(
+			value = "/api/objaviPonudu/{id}",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String RestoranObjaviPonudu(@RequestBody PonudaMessage ponudaMess,@PathVariable("id") String id) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> updatePonuda id:{}", restoran.getId());
+		//novoJelo.setId();
+		System.out.println(ponudaMess.getDoDatuma()+ponudaMess.getOdDatuma());
+		Ponuda ponuda= new Ponuda();
+		ponuda.setDo(ponudaMess.getDoDatuma());
+		ponuda.setOd(ponudaMess.getOdDatuma());
+		ponuda.setRestoran(restoran.getId());
+		ponuda.setJelo(ponudaMess.getJelo());
+		ponuda.setPice(ponudaMess.getPice());
+		Ponuda updatePonuda=ponudaService.create(ponuda);
+		if (updatePonuda== null) {
+			return "error";
+		}
+		logger.info("< updatePonuda id:{}", restoran.getId());
+		return "success";
+	}
+	@RequestMapping(
+			value = "/api/ponude/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Collection<Ponuda>> getPonude(@PathVariable("id") String id) {
+		logger.info("> getRestoran");
+
+		Collection<Ponuda> Sveponude= ponudaService.findAll();
+		Collection<Ponuda> restorani= ponudaService.findAll();
+		
+		for (Ponuda a : Sveponude){
+			if(a.getRestoran().equals(id))restorani.add(a);
+		}
+		
+		logger.info("< getRestoran");
+		return new ResponseEntity<Collection<Ponuda>>(restorani,
+				HttpStatus.OK);
 	}
 	
 	@RequestMapping(
