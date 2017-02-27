@@ -23,6 +23,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import proj.beans.domain.Jelo;
 import proj.beans.domain.NewRadnikMessage;
 import proj.beans.domain.NewRestoranMessage;
+import proj.beans.domain.OceneHraneIPica;
 import proj.beans.domain.Pice;
 import proj.beans.domain.Ponuda;
 import proj.beans.domain.PonudaJela;
@@ -32,12 +33,14 @@ import proj.beans.domain.PonudaPica;
 import proj.beans.domain.PonudaPonudjaca;
 import proj.beans.domain.PonudaPonudjacaMessage;
 import proj.beans.domain.PonudaState;
+import proj.beans.domain.Poseta;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
 import proj.beans.service.PonudaPonudjacaService;
 import proj.beans.service.PonudaService;
+import proj.beans.service.PosetaService;
 import proj.beans.service.RestoranService;
 import proj.beans.service.UserService;
 
@@ -60,6 +63,8 @@ public class UserController {
 	private PonudaService ponudaService;
 	@Autowired
 	private PonudaPonudjacaService ponudaPonudjacaService;
+	@Autowired
+	private PosetaService posetaService;
 
 	@RequestMapping(
 			value = "/api/newRestoran",
@@ -121,6 +126,92 @@ public class UserController {
 
 		logger.info("< getRestoran");
 		return new ResponseEntity<Restoran>(restorani,
+				HttpStatus.OK);
+	}
+	@RequestMapping(
+			value = "/api/OcenaRestoran/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<StringMessage> OcenaRestoran(@PathVariable("id") String id) {
+		logger.info("> getRestoran");
+
+		Restoran restorani= restoranService.findOne(id);
+		Collection<Poseta> posete= posetaService.findAll();
+		double sum=0;
+		double count=0;
+		for(Poseta pos:posete){
+			if(pos.getRestoran().equals(restorani.getId())){
+				sum+=pos.getOcena().getOcenaRestorana();
+				count++;
+			}
+		}
+		StringMessage out= new StringMessage();
+		if(count!=0)
+		out.setString(Double.toString(sum/count));
+		else
+			out.setString("0");
+		logger.info("< getRestoran");
+		return new ResponseEntity<StringMessage>(out,
+				HttpStatus.OK);
+	}
+	@RequestMapping(
+			value = "/api/oceneHrane/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<OceneHraneIPica>> oceneHrane(@PathVariable("id") String id) {
+		logger.info("> getRestoran");
+
+		Restoran restorani= restoranService.findOne(id);
+		Collection<Poseta> posete= posetaService.findAll();
+		
+		ArrayList<OceneHraneIPica> out= new ArrayList<OceneHraneIPica>();
+		
+		for(Jelo jel:restorani.getJelovnik()){
+			double sum=0;
+			double count=0;
+			for(Poseta pos:posete){
+				if(pos.getRestoran().equals(restorani.getId())){
+					for(String nar:pos.getNarucenaJela()){
+						if(nar.equals(jel.getId())){
+							sum+=pos.getOcena().getOcenaJela();
+							count++;
+						}
+					}
+				
+			}
+			}
+			OceneHraneIPica e= new OceneHraneIPica();
+			e.setCena(Float.toString(jel.getCena()));
+			e.setNaziv(jel.getNaziv());
+			e.setOpis(jel.getOpis());
+			if(count!=0)
+			e.setOcena(Double.toString(sum/count));
+			out.add(e);
+		}
+		for(Pice jel:restorani.getKartaPica()){
+			double sum=0;
+			double count=0;
+			for(Poseta pos:posete){
+				if(pos.getRestoran().equals(restorani.getId())){
+					for(String nar:pos.getNarucenaJela()){
+						if(nar.equals(jel.getId())){
+							sum+=pos.getOcena().getOcenaJela();
+							count++;
+						}
+					}
+				
+			}
+			}
+			OceneHraneIPica e= new OceneHraneIPica();
+			e.setCena(Float.toString(jel.getCena()));
+			e.setNaziv(jel.getNaziv());
+			e.setOpis(jel.getOpis());
+			if(count!=0)
+			e.setOcena(Double.toString(sum/count));
+			out.add(e);
+		}
+		logger.info("< getRestoran");
+		return new ResponseEntity<ArrayList<OceneHraneIPica>>(out,
 				HttpStatus.OK);
 	}
 	@RequestMapping(

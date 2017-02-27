@@ -237,6 +237,7 @@ $(document).ready(function() {
 			  document.title=data.naziv;
 			  $("#naziv").html(data.naziv);
 			  $("#vrstaRestorana").html(data.vrsta);
+			  
 			  $("#linkovi").append(
 					  $.parseHTML("<a href='IzmenaRestorana.html?id="+qs["id"]+"'>Izmeni profil restorana</a><br />"));
 			  $("#linkovi").append(
@@ -286,14 +287,24 @@ $(document).ready(function() {
 			"<td><input type='text' id='opisPice'></input></td>"+
 			"<td><input type='number' id='cenaPice'></input></td>"+
 			"<td><button onclick='dodajPice()'>Dodaj</button></td></tr>"));
+	$.getJSON( "api/OcenaRestoran/"+qs["id"], function( data ) {
+		console.log(data);
+		  $("#OcenaRestorana").html(data.string);
+	});
 });
+
 </script>
 <div id="nazivDiv">
+	<p>Naziv: </p>
 	<h1 id="naziv"></h1>
 </div>
 <div id="vrstaDiv">
 	<p>Vrsta Restorana: </p>
 	<p id="vrstaRestorana"></p>
+</div>
+<div id="ocena">
+	<p>Ocena</p>
+	<p id="OcenaRestorana"></p>
 </div>
 <div><p>Jelovnik</p>
 	<table id="jelovnik">
