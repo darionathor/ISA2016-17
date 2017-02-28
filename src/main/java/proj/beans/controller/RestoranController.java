@@ -26,6 +26,8 @@ import proj.beans.domain.OceneHraneIPica;
 import proj.beans.domain.Pice;
 import proj.beans.domain.Poseta;
 import proj.beans.domain.Raspored;
+import proj.beans.domain.RasporedRada;
+import proj.beans.domain.RasporedRadaMessage;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
@@ -33,6 +35,7 @@ import proj.beans.domain.UserType;
 import proj.beans.service.PonudaPonudjacaService;
 import proj.beans.service.PonudaService;
 import proj.beans.service.PosetaService;
+import proj.beans.service.RasporedRadaService;
 import proj.beans.service.RestoranService;
 import proj.beans.service.UserService;
 
@@ -52,6 +55,8 @@ public class RestoranController {
 	private PonudaPonudjacaService ponudaPonudjacaService;
 	@Autowired
 	private PosetaService posetaService;
+	@Autowired
+	private RasporedRadaService rasporedRadaService;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	//TODO preseliti kod iz userControllera ovde.
 	@RequestMapping(
@@ -233,6 +238,67 @@ public class RestoranController {
 		return "success";
 		}return "failed";
 	}
+	@RequestMapping(
+			value = "/api/Rasporedi/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ArrayList<RasporedRada> Rasporedi(@PathVariable("id") String id,HttpSession session) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviNaziv);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		ArrayList<RasporedRada> rr= new ArrayList<RasporedRada>();
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		Collection<RasporedRada> sve= rasporedRadaService.findAll();
+		for(RasporedRada r:sve){
+			if(r.getRadnik()!=null)
+			for(String us:restoran.getRadnici()){
+				if(r.getRadnik().equals(us)){
+					rr.add(r);
+					break;
+				}
+			}
+			
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		
+		}return rr;
+	}
+	@RequestMapping(
+			value = "/api/definisiRaspored/{id}",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String definisiRaspored(@RequestBody RasporedRadaMessage raspored,@PathVariable("id") String id,HttpSession session) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviNaziv);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+			RasporedRada rr= new RasporedRada();
+			rr.setDatum(raspored.getDatum());
+			rr.setDoVreme(raspored.getDoTime());
+			rr.setOdVreme(raspored.getOdTime());
+			rr.setRadnik(raspored.getSelekt());
+			rr.setReoni(raspored.getReon());
+		
+			RasporedRada updateRestoran=rasporedRadaService.update(rr);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+		}return "failed";
+	}	
 	private User prijavljen(String id){
 		if(id!=null)
 			return userService.findOne(id);
@@ -258,6 +324,39 @@ public class RestoranController {
 		 out.setString("true");
 		else out.setString("false");
 		return out;
+	}
+	@RequestMapping(
+			value = "/api/zaposleniRestorana/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ArrayList<User> zaposleniRestorana(@PathVariable("id") String id, HttpSession session) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviNaziv);
+		logger.info("> zaposleniurestoranu id:{}", restoran.getId());
+		ArrayList<User> out=new ArrayList<User>();
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		for(String s:restoran.getRadnici()){
+			out.add(userService.findOne(s));
+		}
+		
+		logger.info("< zaposleniurestoranu id:{}", restoran.getId());
+		return out;
+		}return out;
+	}@RequestMapping(
+			value = "/api/vrstaZaposlenog/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public StringMessage vrstaZaposlenog(@PathVariable("id") String id, HttpSession session) throws Exception {
+		//System.out.println(noviNaziv);
+		StringMessage out=new StringMessage();
+		User zaposleni=userService.findOne(id);
+		if(zaposleni!=null&& zaposleni.getType().equals(UserType.Konobar))
+			out.setString("konobar");
+			return out;
 	}
 	@RequestMapping(
 			value = "/api/RestoranOpis/{id}",
