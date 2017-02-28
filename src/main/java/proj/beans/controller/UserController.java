@@ -73,7 +73,9 @@ public class UserController {
 		logger.info("> getUserType");
 		StringMessage mess= new StringMessage();
 		String id=(String)session.getAttribute("user");
-		User user= userService.findOne(id);
+		User user=null;
+		if(id!=null)
+		user= userService.findOne(id);
 		if(user!=null){
 			if(user.getType().equals(UserType.Gost))mess.setString("gost");
 			if(user.getType().equals(UserType.Konobar))mess.setString("konobar");
@@ -128,6 +130,16 @@ public class UserController {
 		userService.delete(id);
 		logger.info("< deleteUser id:{}", id);
 		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+	}
+	@RequestMapping(
+			value = "/api/logout",
+			method = RequestMethod.POST)
+	public ResponseEntity<StringMessage> logout(
+			HttpSession session) {	
+		logger.info("> logout");
+		session.setAttribute("user", null);
+		logger.info("< logout");
+		return new ResponseEntity<StringMessage>(HttpStatus.NO_CONTENT);
 	}
 
 	@RequestMapping(
