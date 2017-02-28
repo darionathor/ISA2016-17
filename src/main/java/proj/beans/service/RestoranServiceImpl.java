@@ -69,6 +69,7 @@ public class RestoranServiceImpl implements RestoranService{
 	        restoranToUpdate.setVrsta(restoran.getVrsta());
 	        restoranToUpdate.setJelovnik(restoran.getJelovnik());
 	        restoranToUpdate.setKartaPica(restoran.getKartaPica());
+	        restoranToUpdate.setRaspored(restoran.getRaspored());
 	        
 	        Restoran updatedRestoran= restoranRepository.save(restoranToUpdate);
 	        logger.info("< update id:{}", restoran.getId());

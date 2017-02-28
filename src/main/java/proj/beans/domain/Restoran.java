@@ -10,7 +10,15 @@ public class Restoran {
 	private ArrayList<Jelo> Jelovnik;
 	private ArrayList<Pice> KartaPica;
 	private String Menadzer;
+	public Raspored getRaspored() {
+		return raspored;
+	}
+
+	public void setRaspored(Raspored raspored) {
+		this.raspored = raspored;
+	}
 	private ArrayList<String> Radnici;
+	private Raspored raspored;
 	
 	public String getMenadzer() {
 		return Menadzer;

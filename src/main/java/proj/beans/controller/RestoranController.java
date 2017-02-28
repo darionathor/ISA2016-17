@@ -25,6 +25,7 @@ import proj.beans.domain.NewRestoranMessage;
 import proj.beans.domain.OceneHraneIPica;
 import proj.beans.domain.Pice;
 import proj.beans.domain.Poseta;
+import proj.beans.domain.Raspored;
 import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
@@ -360,6 +361,34 @@ public class RestoranController {
 		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
 		novoJelo.setId(Long.toString((new Random().nextLong()/1000)));
 		restoran.getKartaPica().add(novoJelo);
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< updateRestoran id:{}", restoran.getId());
+		return "success";
+		} return "failed";
+	}
+	@RequestMapping(
+			value = "/api/RestoranPostaviRaspored/{id}",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE)
+	public String RestoranPostaviRaspored(@RequestBody Raspored raspored,@PathVariable("id") String id, HttpSession session) throws Exception {
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviOpis);
+		logger.info("> updateRestoran id:{}", restoran.getId());
+		//novoJelo.setId();
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		
+		if(restoran.getRaspored()==null)	
+			restoran.setRaspored(raspored);
 		Restoran updateRestoran=restoranService.update(restoran);
 		if (updateRestoran== null) {
 			return "error";

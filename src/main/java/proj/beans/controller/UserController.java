@@ -202,6 +202,7 @@ public class UserController {
 	public RedirectView guestLogin(
 			@RequestBody User user, HttpServletResponse response,HttpSession session) throws Exception {
 		logger.info("> guestLogin");
+		
 		user.setType(UserType.Gost);
 		Iterator<User> it = userService.findAll().iterator();
 		while(it.hasNext()){

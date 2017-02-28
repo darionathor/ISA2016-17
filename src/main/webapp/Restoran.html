@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>        
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="fabric.min.js"></script>
 <title>Restoran</title>
 <script type="text/javascript">
 $.fn.serializeObject = function() {
@@ -19,6 +20,30 @@ $.fn.serializeObject = function() {
 	return o;
 };
 
+function dodajSto() {
+	 canvas= new fabric.Canvas('canvas');
+	  
+		canvas.add(new fabric.Rect({
+			  top: 50,
+			  left: 50,
+			  width: 60,
+			  height: 70,
+			  fill: 'red',
+			  lockScalingX: 'true',
+			  lockScalingY: 'true',
+			  lockRotation : 'true'
+			}));
+		canvas.add(new fabric.Rect({
+				  top: 50,
+				  left: 50,
+				  width: 60,
+				  height: 70,
+				  fill: 'blue',
+				  lockScalingX: 'true',
+				  lockScalingY: 'true',
+				  lockRotation : 'true'
+				}));
+}
 function izmeniVrstu() {
 
 	var qs = (function(a) {
@@ -218,6 +243,8 @@ function validate() {
 <body>
 <script>
 $(document).ready(function() {
+
+	
 	var qs = (function(a) {
 	    if (a == "") return {};
 	    var b = {};
@@ -305,7 +332,118 @@ $(document).ready(function() {
 				  );
 		});
 		console.log(data);
-			  
+		if(data.raspored===null){
+		 	canvas= new fabric.Canvas('canvas');
+
+		 	var circle, isDown, origX, origY;
+			var ukljucen=false;
+		 	canvas.on('mouse:down', function(o){
+		 		if(ukljucen){
+		 	  isDown = true;
+		 	  var pointer = canvas.getPointer(o.e);
+		 	  origX = pointer.x;
+		 	  origY = pointer.y;
+		 	  circle = new fabric.Rect({
+		 	    left: pointer.x,
+		 	    top: pointer.y,
+		 	    opacity:0.1,
+		 	    width: 5,
+		 	   height: 5,
+		 	    stroke: 'red',
+		 	    selectable: false,
+		 	    originX: 'center', originY: 'center'
+		 	  });
+		 	  canvas.add(circle);
+		 		}
+		 	});
+
+		 	canvas.on('mouse:move', function(o){
+		 		if(!ukljucen)return;
+		 	  if (!isDown) return;
+		 	  var pointer = canvas.getPointer(o.e);
+		 	  if(origX>pointer.x/2-origX/2)
+		 		  left=origX+pointer.x/2-origX/2;
+		 	  else
+		 		  left=pointer.x
+		 	  circle.set({ 
+		 		    left: Math.abs(origX+pointer.x/2-origX/2),
+		 		    top: Math.abs(origY+pointer.y/2-origY/2),
+			 	    width: Math.abs(pointer.x-origX),
+			 	   height: Math.abs(pointer.y-origY) });
+		 	  canvas.renderAll();
+		 	});
+
+		 	canvas.on('mouse:up', function(o){
+		 	  if(!ukljucen)return;
+		 		isDown = false;
+		 	 $("#canv").append($.parseHTML("<input type='text' name='nazivSegmenta' value='default'></input>"));
+				  
+		 	});
+			$("#canv").append($.parseHTML("<button class='square'>dodaj sto</button>"));
+			$("#canv").append($.parseHTML("<button class='regija'>dodaj region</button>"));
+	 
+			$("#canv").append($.parseHTML("<button class='posalji'>Snimi</button>"));
+			
+			document.querySelectorAll('.square')[0].addEventListener('click', function(){  
+				  canvas.add(new fabric.Circle({left: 0, top: 0, fill: '#000', radius: 10}));
+				});
+			document.querySelectorAll('.regija')[0].addEventListener('click', function(){  
+				  if(ukljucen)ukljucen=false;
+				  else ukljucen=true;
+				});
+			document.querySelectorAll('.posalji')[0].addEventListener('click', function(){  
+				var obj={};
+				obj["stolovi"]=[];
+				obj["segmenti"]=[];
+					$.each(canvas.getObjects(),function(key,val){
+						if(val.opacity!=0.1)
+						obj["stolovi"].push({"left":val.left,"top":val.top});
+						else
+							obj["segmenti"].push({"naziv":"default","left":val.left,"top":val.top,"width":val.width,"height":val.height});
+					});
+					var imena=document.getElementsByName('nazivSegmenta');
+					$.each(imena,function(key,val){
+						obj["segmenti"][key]["Naziv"]=val.value;
+						console.log(val.value);
+					})
+				console.log(obj);
+				$.ajax({
+					type : "POST",
+					url : "api/RestoranPostaviRaspored/"+qs["id"],
+					data : JSON.stringify(obj),
+					contentType : "application/json; charset=utf-8",
+					dataType : "text",
+					success : function(data) {
+						console.log(data);
+					},
+					failure : function(errMsg) {
+						alert(errMsg);
+					}
+				});
+			
+					});
+			}else{
+				canvas= new fabric.StaticCanvas('canvas');
+				$.each(data.raspored.stolovi,function(key,val){
+					 canvas.add(new fabric.Circle({left: val.left, top: val.top, fill: '#000', radius: 10}));
+				})
+				$.each(data.raspored.segmenti,function(key,val){
+					canvas.add(new fabric.Rect({
+				 	    left: val.left,
+				 	    top: val.top,
+				 	    opacity:0.1,
+				 	    width: val.width,
+				 	   height: val.height,
+				 	    stroke: 'red',
+				 	    selectable: false,
+				 	  }));
+					canvas.add(new fabric.Text(val.naziv, { 
+					    left: val.left, //Take the block's position
+					    top: val.top, 
+					    fill: 'white'
+					}));	
+				})
+			}
 		  });
 	
 	$.getJSON( "api/OcenaRestoran/"+qs["id"], function( data ) {
@@ -346,7 +484,7 @@ $(document).ready(function() {
 </div>
 <div id="konfigSedenja"></div>
 <div id="linkovi">
-
 </div>
+<div id="canv"><canvas id="canvas" width="500" height="600" style="border:1px solid #000000;"></canvas></div>
 </body>
 </html>
