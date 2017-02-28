@@ -234,36 +234,35 @@ $(document).ready(function() {
 	console.log(qs);
 	var data2={};
 	data2["string"]='false';
-	$.getJSON( "api/menadzerOvogRestorana/"+qs["id"], function( data ) {
-		console.log(data);
-		data2=data;
-		if(data2.string==='true'){
-			$("#nazivDiv").append(
-					$.parseHTML("<input type='text' id='poljeNaziv'></input><button onclick='izmeniNaziv()'>Izmeni</button>"));
-			$("#vrstaDiv").append(
-					$.parseHTML("<input type='text' id='poljeVrsta'></input><button onclick='izmeniVrstu()'>Izmeni</button>"));
-			$("#jelovnik").append(
-					$.parseHTML("<tr>"+
-					"<td><input type='text' id='nazivJelo'></input></td>"+
-					"<td><input type='text' id='opisJelo'></input></td>"+
-					"<td><input type='number' id='cenaJelo'></input></td>"+
-					"<td><button onclick='dodajJelo()'>Dodaj</button></td></tr>"));
-			$("#kartaPica").append(
-					$.parseHTML("<tr>"+
-					"<td><input type='text' id='nazivPice'></input></td>"+
-					"<td><input type='text' id='opisPice'></input></td>"+
-					"<td><input type='number' id='cenaPice'></input></td>"+
-					"<td><button onclick='dodajPice()'>Dodaj</button></td></tr>"));
-			}
-	});
+	
 	$.getJSON( "api/Restoran/"+qs["id"], function( data ) {
-		console.log(data);
-			  document.title=data.naziv;
+		$.getJSON( "api/menadzerOvogRestorana/"+qs["id"], function( data3 ) {
+			console.log(data3);
+			data2=data3;
+			if(data2.string==='true'){
+				$("#nazivDiv").append(
+						$.parseHTML("<input type='text' id='poljeNaziv'></input><button onclick='izmeniNaziv()'>Izmeni</button>"));
+				$("#vrstaDiv").append(
+						$.parseHTML("<input type='text' id='poljeVrsta'></input><button onclick='izmeniVrstu()'>Izmeni</button>"));
+				$("#jelovnik").append(
+						$.parseHTML("<tr>"+
+						"<td><input type='text' id='nazivJelo'></input></td>"+
+						"<td><input type='text' id='opisJelo'></input></td>"+
+						"<td><input type='number' id='cenaJelo'></input></td>"+
+						"<td><button onclick='dodajJelo()'>Dodaj</button></td></tr>"));
+				$("#kartaPica").append(
+						$.parseHTML("<tr>"+
+						"<td><input type='text' id='nazivPice'></input></td>"+
+						"<td><input type='text' id='opisPice'></input></td>"+
+						"<td><input type='number' id='cenaPice'></input></td>"+
+						"<td><button onclick='dodajPice()'>Dodaj</button></td></tr>"));
+				}
+			document.title=data.naziv;
 			  $("#naziv").html(data.naziv);
 			  $("#vrstaRestorana").html(data.vrsta);
 			  if(data2.string==='true'){
-			  $("#linkovi").append(
-					  $.parseHTML("<a href='IzmenaRestorana.html?id="+qs["id"]+"'>Izmeni profil restorana</a><br />"));
+			  //$("#linkovi").append(
+					 // $.parseHTML("<a href='IzmenaRestorana.html?id="+qs["id"]+"'>Izmeni profil restorana</a><br />"));
 			  $("#linkovi").append(
 					  $.parseHTML("<a href='UnosProfilaZaposlenog.html?id="+qs["id"]+"'>Unesi profil zaposlenog</a><br />"));
 			  $("#linkovi").append(
@@ -304,6 +303,9 @@ $(document).ready(function() {
 				  }
 				  }
 				  );
+		});
+		console.log(data);
+			  
 		  });
 	
 	$.getJSON( "api/OcenaRestoran/"+qs["id"], function( data ) {

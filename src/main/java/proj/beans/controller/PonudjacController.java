@@ -3,6 +3,8 @@ package proj.beans.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +59,14 @@ public class PonudjacController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String Ponudjac(@RequestBody NewRadnikMessage message) throws Exception {
+	public String Ponudjac(@RequestBody NewRadnikMessage message, HttpSession session) throws Exception {
 		//System.out.println(noviOpis);
+		String id= (String)session.getAttribute("user");
+		User menadzer=null;
+		if(id!=null)
+			menadzer=userService.findOne(id);
+		
+		if(menadzer!=null && menadzer.getType().equals(UserType.MenadzerRestorana)){
 		User user= new User();
 		user.setEmail(message.getEmail());
 		user.setUsername(message.getUsername());
@@ -70,17 +78,26 @@ public class PonudjacController {
 			return "error";
 		}
 		return "success";
+		}return "failed";
 	}
 	@RequestMapping(
 			value = "/api/objaviPonudu/{id}",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String RestoranObjaviPonudu(@RequestBody PonudaMessage ponudaMess,@PathVariable("id") String id) throws Exception {
+	public String RestoranObjaviPonudu(@RequestBody PonudaMessage ponudaMess,@PathVariable("id") String id, HttpSession session) throws Exception {
+		String idusera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idusera!=null)
+			menadzer=userService.findOne(idusera);
+		
+		
+		
 		Restoran restoran=restoranService.findOne(id);
 		//System.out.println(noviOpis);
 		logger.info("> updatePonuda id:{}", restoran.getId());
 		//novoJelo.setId();
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
 		System.out.println(ponudaMess.getDoDatuma()+ponudaMess.getOdDatuma());
 		Ponuda ponuda= new Ponuda();
 		ponuda.setDo(ponudaMess.getDoDatuma());
@@ -93,19 +110,32 @@ public class PonudjacController {
 			return "error";
 		}
 		logger.info("< updatePonuda id:{}", restoran.getId());
+		
 		return "success";
+		}else return "failed";
 	}
 	@RequestMapping(
 			value = "/api/prihvatiPonudu/{id}",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String prihvatiPonudu(@RequestBody StringMessage mess,@PathVariable("id") String id) throws Exception {
+	public String prihvatiPonudu(@RequestBody StringMessage mess,@PathVariable("id") String id, HttpSession session) throws Exception {
 		PonudaPonudjaca pon= ponudaPonudjacaService.findOne(mess.getString());
 		//System.out.println(noviOpis);
 		logger.info("> updatePonuda id:{}", pon.getId());
-		//novoJelo.setId();
+		//novoJelo.setId();		
+		
 		Ponuda ponuda= ponudaService.findOne(pon.getPonuda());
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		
+		Restoran restoran=restoranService.findOne(ponuda.getRestoran());
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		
+		
 		ponuda.setPrihvacenaPonuda(pon.getId());
 		Ponuda updatePonuda=ponudaService.update(ponuda);
 		
@@ -123,21 +153,31 @@ public class PonudjacController {
 		}
 		logger.info("< updatePonuda id:{}", pon.getId());
 		return "success";
+		}return "failed";
 	}
 	@RequestMapping(
 			value = "/api/ponude/{id}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id) {
+	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id,HttpSession session) {
 		logger.info("> getRestoran");
 		Collection<PonudaPonudjaca> SveponudePon= ponudaPonudjacaService.findAll();
 		
 		Collection<Ponuda> Sveponude= ponudaService.findAll();
 		ArrayList<PonudaOutMessage> outmessagi= new ArrayList<PonudaOutMessage>();
-		Restoran restorani =restoranService.findOne(id);
+		Restoran restoran =restoranService.findOne(id);
+		
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		
 		for (Ponuda a : Sveponude){
 			if(a.getRestoran().equals(id)){
-				PonudaOutMessage pom=new PonudaOutMessage(a,restorani);
+				PonudaOutMessage pom=new PonudaOutMessage(a,restoran);
 				
 				for(PonudaPonudjaca p:SveponudePon){
 					if(p.getPonuda().equals(a.getId())){
@@ -151,16 +191,23 @@ public class PonudjacController {
 		logger.info("< getRestoran");
 		return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
 				HttpStatus.OK);
+		}
+		return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
+				HttpStatus.FORBIDDEN);
 	}
 	@RequestMapping(
 			value = "/api/svePonude",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<PonudaOutMessage>> getSvePonude() {
+	public ResponseEntity<Collection<PonudaOutMessage>> getSvePonude(HttpSession session) {
 		logger.info("> getRestoran");
-
-		Collection<Ponuda> Sveponude= ponudaService.findAll();
+		String idPonudjaca=(String) session.getAttribute("user");
+		User ponudjac=null;
 		ArrayList<PonudaOutMessage> outmessagi= new ArrayList<PonudaOutMessage>();
+		if(idPonudjaca!=null)
+			ponudjac=userService.findOne(idPonudjaca);
+		if(ponudjac!=null && ponudjac.getType().equals(UserType.Ponudjac)){
+		Collection<Ponuda> Sveponude= ponudaService.findAll();
 		Collection<Restoran> restorani =restoranService.findAll();
 		for (Ponuda a : Sveponude){
 			for(Restoran r: restorani){
@@ -174,6 +221,8 @@ public class PonudjacController {
 		logger.info("< getRestoran");
 		return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
 				HttpStatus.OK);
+		}return new ResponseEntity<Collection<PonudaOutMessage>>(outmessagi,
+				HttpStatus.FORBIDDEN);
 	}
 
 	@RequestMapping(
@@ -181,13 +230,21 @@ public class PonudjacController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
-	public String PonudjacObjaviPonudu(@RequestBody PonudaPonudjacaMessage ponudaMess,@PathVariable("id") String id) throws Exception {
+	public String PonudjacObjaviPonudu(@RequestBody PonudaPonudjacaMessage ponudaMess,@PathVariable("id") String id,HttpSession session) throws Exception {
 		Ponuda ponuda=ponudaService.findOne(id);
 		//System.out.println(noviOpis);
 		logger.info("> ponudiPonudu id:{}", ponuda.getId());
 		//novoJelo.setId();
+		String idPonudjaca=(String) session.getAttribute("user");
+		User ponudjac=null;
+		if(idPonudjaca!=null)
+			ponudjac=userService.findOne(idPonudjaca);
+		if(ponudjac!=null && ponudjac.getType().equals(UserType.Ponudjac)){
+		
+		
 		PonudaPonudjaca pp= new PonudaPonudjaca();
 		pp.setPonuda(ponuda.getId());
+		pp.setPonudjac(ponudjac.getId());
 		pp.setpJela(new ArrayList<PonudaJela>());
 		pp.setpPice(new ArrayList<PonudaPica>());
 		for(ArrayList<String> l:ponudaMess.getIdArtikla()){
@@ -213,5 +270,6 @@ public class PonudjacController {
 		}
 		logger.info("< ponudiPonudu id:{}", ponuda.getId());
 		return "success";
+		}return "failed";
 	}
 }

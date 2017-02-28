@@ -1,5 +1,6 @@
 package proj.beans.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -56,13 +57,18 @@ public class UserController {
 			value = "/api/users",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<User>> getUsers() {
+	public ResponseEntity<Collection<User>> getUsers(HttpSession session) {
 		logger.info("> getUser");
-
-		Collection<User> user= userService.findAll();
+		String id=(String)session.getAttribute("user");
+		User user=null;
+		if(id!=null)
+		user= userService.findOne(id);
+		Collection<User> users=new ArrayList<User>();
+		if(user!=null && user.getType().equals(UserType.MenadzerSistema))
+			users= userService.findAll();
 
 		logger.info("< getUser");
-		return new ResponseEntity<Collection<User>>(user,
+		return new ResponseEntity<Collection<User>>(users,
 				HttpStatus.OK);
 	}
 	@RequestMapping(
@@ -148,7 +154,12 @@ public class UserController {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.TEXT_PLAIN_VALUE)
 	public String createNewMenadzerSistema(
-			@RequestBody User user) throws Exception {
+			@RequestBody User user, HttpSession session) throws Exception {
+		String id=(String)session.getAttribute("user");
+		User us=null;
+		if(id!=null)
+			us= userService.findOne(id);
+		if(us!=null && us.getType().equals(UserType.MenadzerSistema))
 		logger.info("> createMenadzerSistema");
 		user.setType(UserType.MenadzerSistema);
 		Iterator<User> it = userService.findAll().iterator();

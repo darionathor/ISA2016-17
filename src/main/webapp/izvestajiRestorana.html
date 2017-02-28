@@ -40,17 +40,22 @@ $(document).ready(function() {
 	    return b;
 	})(window.location.search.substr(1).split('&'));
 	console.log(qs);
-	$.getJSON( "api/oceneHrane/"+qs["id"], function( data ) {
-		console.log(data);
-			  $.each(data,function(key,val){
-			  
-			 	 $("#jelovnik").append(
-					  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
-					  val.ocena+"</td></tr>"));
-			 	 
-			  }
-			  );
-		  });
+	$.getJSON( "api/menadzerOvogRestorana/"+qs["id"], function( data2 ) {
+		
+		if(data2.string==='true'){
+			$.getJSON( "api/oceneHrane/"+qs["id"], function( data ) {
+				console.log(data);
+					  $.each(data,function(key,val){
+					  
+					 	 $("#jelovnik").append(
+							  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
+							  val.ocena+"</td></tr>"));
+					 	 
+					  }
+					  );
+				  });
+		}
+	}
 	
 	
 });
