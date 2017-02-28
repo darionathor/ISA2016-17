@@ -25,7 +25,7 @@ $(document).ready(function() {
 	$.getJSON( "api/restorani", function( data ) {
 		  var items = [];
 		  $.each( data, function( key, val ) {
-			  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+" </a>";
+			  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+" </a><br />";
 			  console.log(s);
 			  var t=$.parseHTML(s);
 			  console.log(t);
@@ -43,12 +43,20 @@ $(document).ready(function() {
 				  
 			  }
 			  if(type==='gost'){
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 				  
 			  }
 			  if(type==='konobar'){
-				  
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 			  }
 			  if(type==='menadzerSistema'){
+				  $("#linkovi").append(
+						$.parseHTML(
+								"<button onclick=logout()>Odjava</button>"));
 				  $("#linkovi").append(
 							$.parseHTML("<a href='list.jsp'>lista korisnika</a><br />"));
 
@@ -56,15 +64,27 @@ $(document).ready(function() {
 							$.parseHTML("<a href='MenadzerSistema.html'>Menadzer sistema</a><br />"));
 			  }
 			  if(type==='menadzerRestorana'){
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 				  
 			  }
 			  if(type==='sanker'){
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 				  
 			  }
 			  if(type==='kuvar'){
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 				  
 			  }
 			  if(type==='ponudjac'){
+				  $("#linkovi").append(
+							$.parseHTML(
+									"<button onclick=logout()>Odjava</button>"));
 				  $("#linkovi").append(
 							$.parseHTML("<a href='svePorudzbine.html'>Sve porudzbine</a><br />"));
 				  
@@ -73,7 +93,6 @@ $(document).ready(function() {
 });
 </script>
 	<h2>Hello World!</h2>
-	<button onclick=logout()>Odjava</button>
 	<p id="linkovi"> Linkovi:
 	<a href="radniKalendarKonobara.html">Radni kalendar konobara</a><br />
 	<a href="rasporedStolova.html">Raspored stolova</a><br />

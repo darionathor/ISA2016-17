@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -215,6 +217,32 @@ public class RestoranController {
 		}
 		logger.info("< updateRestoran id:{}", restoran.getId());
 		return "success";
+	}
+	private User prijavljen(String id){
+		if(id!=null)
+			return userService.findOne(id);
+		else return null;
+	}
+	@RequestMapping(
+			value = "/api/menadzerOvogRestorana/{id}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public StringMessage menadzerOvogRestorana(@PathVariable("id") String id, HttpSession session) throws Exception {
+		String idUsera=(String)session.getAttribute("user");
+		User user=prijavljen(idUsera);
+		Restoran restoran=restoranService.findOne(id);
+		//System.out.println(noviNaziv);
+		logger.info("> menadzerOvogRestorana id:{}", restoran.getId());
+		StringMessage out= new StringMessage();
+		if (user==null) {
+			out.setString("error");
+			return out;
+		}
+		logger.info("< menadzerOvogRestorana id:{}", restoran.getId());
+		if(restoran.getMenadzer().equals(idUsera))			
+		 out.setString("true");
+		else out.setString("false");
+		return out;
 	}
 	@RequestMapping(
 			value = "/api/RestoranOpis/{id}",
