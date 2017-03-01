@@ -334,10 +334,17 @@ public class UserController {
 		String id=(String)session.getAttribute("user");
 		StringMessage out= new  StringMessage();
 		User us=null;
+		Collection<User> users= userService.findAll();
 		if(id!=null)
 			us= userService.findOne(id);
 		if(us!=null && us.getType().equals(UserType.Ponudjac)){
 			us.setPassword(user.getPassword());
+			for(User u:users){
+				if(u.getUsername().equals(user.getUsername())){
+					out.setString("usernameExists");
+					return out;
+				}
+			}
 			us.setUsername(user.getUsername());
 			us.setEmail(user.getEmail());
 			userService.update(us);

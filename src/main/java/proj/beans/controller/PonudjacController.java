@@ -1,5 +1,6 @@
 package proj.beans.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -148,6 +149,7 @@ public class PonudjacController {
 			}
 			
 		}
+		ponudaPonudjacaService.update(pon);
 		if (updatePonuda== null) {
 			return "error";
 		}
@@ -159,7 +161,7 @@ public class PonudjacController {
 			value = "/api/ponude/{id}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id,HttpSession session) {
+	public ResponseEntity<Collection<PonudaOutMessage>> getPonude(@PathVariable("id") String id,HttpSession session) throws ParseException {
 		logger.info("> getRestoran");
 		Collection<PonudaPonudjaca> SveponudePon= ponudaPonudjacaService.findAll();
 		
@@ -199,7 +201,7 @@ public class PonudjacController {
 			value = "/api/svePonude",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Collection<PonudaOutMessage>> getSvePonude(HttpSession session) {
+	public ResponseEntity<Collection<PonudaOutMessage>> getSvePonude(HttpSession session) throws ParseException {
 		logger.info("> getRestoran");
 		String idPonudjaca=(String) session.getAttribute("user");
 		User ponudjac=null;
@@ -212,7 +214,23 @@ public class PonudjacController {
 		for (Ponuda a : Sveponude){
 			for(Restoran r: restorani){
 				if(a.getRestoran().equals(r.getId())){
-					outmessagi.add(new PonudaOutMessage(a,r));
+					PonudaOutMessage o=new PonudaOutMessage(a,r);
+					Collection<PonudaPonudjaca> po= ponudaPonudjacaService.findAll();
+					for(PonudaPonudjaca p:po){
+						if(p.getPonudjac().equals(ponudjac.getId()) && p.getPonuda().equals(a.getId())){
+							ArrayList<PonudaPonudjaca> ponude = new ArrayList<PonudaPonudjaca>();
+									ponude.add(p);
+							o.setPonude(ponude);
+							break;
+						}
+					}
+					if(a.getPrihvacenaPonuda()!=null){
+					PonudaPonudjaca ppp=
+							ponudaPonudjacaService.findOne(a.getPrihvacenaPonuda());
+					if(ppp!=null && ppp.getPonudjac().equals(ponudjac.getId()))o.setAccepted(true);
+					else o.setAccepted(false);
+					}
+					outmessagi.add(o);
 					break;
 				}
 			}
@@ -240,9 +258,17 @@ public class PonudjacController {
 		if(idPonudjaca!=null)
 			ponudjac=userService.findOne(idPonudjaca);
 		if(ponudjac!=null && ponudjac.getType().equals(UserType.Ponudjac)){
-		
-		
-		PonudaPonudjaca pp= new PonudaPonudjaca();
+		Collection<PonudaPonudjaca> ponude= ponudaPonudjacaService.findAll();
+		PonudaPonudjaca pp=null;
+		boolean update=false;
+		for(PonudaPonudjaca p:ponude){
+			if(p.getPonudjac().equals(idPonudjaca)&& p.getPonuda().equals(ponuda.getId())){
+				pp=p;
+				update=true;
+				break;
+			}
+		}if(pp==null)
+		pp= new PonudaPonudjaca();
 		pp.setPonuda(ponuda.getId());
 		pp.setPonudjac(ponudjac.getId());
 		pp.setpJela(new ArrayList<PonudaJela>());
@@ -251,20 +277,24 @@ public class PonudjacController {
 			String idd=l.get(0);
 			String kol=l.get(1);
 			String cena=l.get(2);
+			if(ponuda.getJelo()!=null)
 			for(String st:ponuda.getJelo()){
 				if(st.equals(idd)){
 					pp.getpJela().add(new PonudaJela(idd,kol,cena));
 					break;
 				}
 			}
+			if(ponuda.getPice()!=null)
 			for(String st:ponuda.getPice()){
 				if(st.equals(idd)){
 					pp.getpPice().add(new PonudaPica(idd,kol,cena));
 					break;
 				}
 			}
-		}
-		PonudaPonudjaca updatePonuda=ponudaPonudjacaService.create(pp);
+		}PonudaPonudjaca updatePonuda=null;
+		if(update)updatePonuda=ponudaPonudjacaService.update(pp);
+		else
+		 updatePonuda=ponudaPonudjacaService.create(pp);
 		if (updatePonuda== null) {
 			return "error";
 		}

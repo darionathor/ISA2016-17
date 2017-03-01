@@ -583,6 +583,39 @@ public class RestoranController {
 		}return "failed";
 	}
 	@RequestMapping(
+			value = "/api/RestoranIzmeniHranu/{id}/{id2}",
+			method = RequestMethod.PUT)
+	public String RestoranIzmeniHranu(@RequestBody Jelo novoJelo,
+			@PathVariable("id") String id,@PathVariable("id2") String idJela, HttpSession session) throws Exception {
+		logger.info("> izmeniJelo id:{}", idJela);
+		//System.out.println(idJela);
+		Restoran restoran=restoranService.findOne(id);
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		for(int i=0;i<restoran.getJelovnik().size();i++){
+			System.out.println(restoran.getJelovnik().get(i).getId());
+			if(idJela.equals(restoran.getJelovnik().get(i).getId())){
+				restoran.getJelovnik().get(i).setNaziv(novoJelo.getNaziv());
+				restoran.getJelovnik().get(i).setOpis(novoJelo.getOpis());
+				restoran.getJelovnik().get(i).setCena(novoJelo.getCena());
+				logger.info("< true ");
+				break;
+			}
+		}
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< izmeniJelo id:{}", idJela);
+		return "success";
+		}return "failed";
+	}
+	@RequestMapping(
 			value = "/api/RestoranDodajPice/{id}",
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -655,9 +688,43 @@ public class RestoranController {
 		for(int i=0;i<restoran.getKartaPica().size();i++){
 			System.out.println(restoran.getKartaPica().get(i).getId());
 			if(idJela.equals(restoran.getKartaPica().get(i).getId())){
-				restoran.getKartaPica().remove(i);
+				
 				logger.info("< true ");
 				break;
+			}
+		}
+		Restoran updateRestoran=restoranService.update(restoran);
+		if (updateRestoran== null) {
+			return "error";
+		}
+		logger.info("< deletePice id:{}", idJela);
+		return "success";
+		}
+		return "failed";
+	}
+	@RequestMapping(
+			value = "/api/RestoranIzmeniPice/{id}/{id2}",
+			method = RequestMethod.PUT)
+	public String RestoranIzmeniPice(@RequestBody Pice novoJelo,
+			@PathVariable("id") String id,@PathVariable("id2") String idJela, HttpSession session) throws Exception {
+		logger.info("> deletePice id:{}", idJela);
+		//System.out.println(idJela);
+		String idMenadzera=(String) session.getAttribute("user");
+		User menadzer=null;
+		if(idMenadzera!=null)
+			menadzer=userService.findOne(idMenadzera);
+			
+		
+		Restoran restoran=restoranService.findOne(id);
+		if(menadzer!=null && restoran!=null && restoran.getMenadzer().equals(menadzer.getId())){
+		for(int i=0;i<restoran.getKartaPica().size();i++){
+			System.out.println(restoran.getKartaPica().get(i).getId());
+				if(idJela.equals(restoran.getKartaPica().get(i).getId())){
+					restoran.getKartaPica().get(i).setNaziv(novoJelo.getNaziv());
+					restoran.getKartaPica().get(i).setOpis(novoJelo.getOpis());
+					restoran.getKartaPica().get(i).setCena(novoJelo.getCena());
+					logger.info("< true ");
+					break;
 			}
 		}
 		Restoran updateRestoran=restoranService.update(restoran);

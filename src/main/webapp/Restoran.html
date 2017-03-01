@@ -197,12 +197,20 @@ function validate() {
 	    }
 	    return b;
 	})(window.location.search.substr(1).split('&'));
-		
-		$.ajax({
-			type : "DELETE",
-			url : "api/RestoranObrisiJelo/"+qs["id"]+"/"+id,
-			dataType : "text",
-			success : function(data) {
+		var el=document.getElementsByName(id);
+	var naziv=el[0].value;
+	var opis=el[1].value;
+	var cena=el[2].value;
+	
+	var obj={"naziv":naziv,"opis":opis,"cena":cena};
+	console.log(obj);
+	$.ajax({
+		type : "PUT",
+		url : "api/RestoranIzmeniHranu/"+qs["id"]+"/"+id,
+		data : JSON.stringify(obj),
+		contentType : "application/json; charset=utf-8",
+		dataType : "text",
+		success : function(data) {
 				console.log(data);
 			},
 			failure : function(errMsg) {
@@ -224,18 +232,27 @@ function validate() {
 	    }
 	    return b;
 	})(window.location.search.substr(1).split('&'));
-		
-		$.ajax({
-			type : "DELETE",
-			url : "api/RestoranObrisiPice/"+qs["id"]+"/"+id,
-			dataType : "text",
-			success : function(data) {
+		var el=document.getElementsByName(id);
+	var naziv=el[0].value;
+	var opis=el[1].value;
+	var cena=el[2].value;
+	
+	var obj={"naziv":naziv,"opis":opis,"cena":cena};
+	console.log(obj);
+	$.ajax({
+		type : "PUT",
+		url : "api/RestoranIzmeniPice/"+qs["id"]+"/"+id,
+		data : JSON.stringify(obj),
+		contentType : "application/json; charset=utf-8",
+		dataType : "text",
+		success : function(data) {
 				console.log(data);
 			},
 			failure : function(errMsg) {
 				alert(errMsg);
 			}
 		});
+
 
 }
 </script>
@@ -306,8 +323,10 @@ $(document).ready(function() {
 			  $.each(data.jelovnik,function(key,val){
 			  	if(data2.string==='true'){
 			 	 $("#jelovnik").append(
-					  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
-					  "<button onclick='obrisiJelo("+val.id+")'>Obrisi</button></td></tr>"));
+					  $.parseHTML("<tr><td><input type='text' id='nazivJelo' name='"+val.id+"' value='"+val.naziv+"'></input></td>"+
+						"<td><input type='text' id='opisJelo' name='"+val.id+"' value='"+val.opis+"'></input></td>"+
+						"<td><input type='number' id='cenaJelo' name='"+val.id+"' value='"+val.cena+"'></input></td>"+
+					  "<td><button onclick='obrisiJelo("+val.id+")'>Izmeni</button></td></tr>"));
 			  	}else{
 			  		$("#jelovnik").append(
 							  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
@@ -318,9 +337,11 @@ $(document).ready(function() {
 			  $.each(data.kartaPica,function(key,val){
 				  if(data2.string==='true'){
 					 	
-				 	 $("#kartaPica").append(
-						  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+
-						  "<button onclick='obrisiPice("+val.id+")'>Obrisi</button></td></tr>"));
+					  $("#kartaPica").append(
+							  $.parseHTML("<tr><td><input type='text' id='nazivPice' name='"+val.id+"' value='"+val.naziv+"'></input></td>"+
+								"<td><input type='text' id='opisPice' name='"+val.id+"' value='"+val.opis+"'></input></td>"+
+								"<td><input type='number' id='cenaPice' name='"+val.id+"' value='"+val.cena+"'></input></td>"+
+							  "<td><button onclick='obrisiPice("+val.id+")'>Izmeni</button></td></tr>"));
 				  }else{
 				  		$("#kartaPica").append(
 								  $.parseHTML("<tr><td>"+val.naziv+"</td><td>"+val.opis+"</td><td>"+val.cena+"</td><td>"+

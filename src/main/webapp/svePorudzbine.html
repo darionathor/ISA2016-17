@@ -99,18 +99,63 @@ $(document).ready(function() {
 					$.each(val.pice,function(key2,val2){
 						string=string+"<td colspan='2'>"+val2.naziv+"</td>";
 					});
-					  string=string+"</tr><tr><td colspan='3'></td>";
+						if(val.prihvacen && val.accepted)
+					  		string=string+"</tr><tr><td colspan='3'>Prihvacen</td>";
+					  		else if(val.prihvacen && !val.accepted && val.ponude.length>0)
+						  		string=string+"</tr><tr><td colspan='3'>Odbijen</td>";
+					  		else
+						  		string=string+"</tr><tr><td colspan='3'></td>";
+					  if(!val.prihvacen && !val.istekaoRok){
 					  if(val.jelo!=null)
 							$.each(val.jelo,function(key2,val2){
-								string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
-								string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
+								if(val.ponude[0]!=undefined){
+									string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pJela[key2].kol+"' type='number'></input></td>";
+									string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pJela[key2].cena+"' type='number'></input></td>";
+									}else{
+										string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"'  type='number'></input></td>";
+										string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
+										
+									}
 							});
 						if(val.pice!=null)
 						$.each(val.pice,function(key2,val2){
-							string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
-							string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
+							if(val.ponude[0]!=undefined){
+							string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pPice[key2].kol+"' type='number'></input></td>";
+							string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pPice[key2].cena+"' type='number'></input></td>";
+							}else{
+								string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"'  type='number'></input></td>";
+								string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number'></input></td>";
+								
+							}
 						});
-					  string=string+"<td><button onclick=submita('"+val.id+"')>Ponudi</button></td></tr></table>";
+
+						  string=string+"<td><button onclick=submita('"+val.id+"')>Ponudi</button></td>";
+					  }
+						if(val.prihvacen || val.istekaoRok){
+					  if(val.jelo!=null)
+							$.each(val.jelo,function(key2,val2){
+								if(val.ponude[0]!=undefined){
+									string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pJela[key2].kol+"' type='number' disabled></input></td>";
+									string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pJela[key2].cena+"' type='number' disabled></input></td>";
+									}else{
+										string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"'  type='number' disabled></input></td>";
+										string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number' disabled></input></td>";
+										
+									}
+							});
+						if(val.pice!=null)
+						$.each(val.pice,function(key2,val2){
+							if(val.ponude[0]!=undefined){
+							string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pPice[key2].kol+"' type='number' disabled></input></td>";
+							string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' value='"+val.ponude[0].pPice[key2].cena+"' type='number' disabled></input></td>";
+							}else{
+								string=string+"<td><input class='kol' name='"+val.id+"' id='"+val2.id+"'  type='number' disabled></input></td>";
+								string=string+"<td><input class='cena' name='"+val.id+"' id='"+val2.id+"' type='number' disabled></input></td>";
+								
+							}
+						});
+						}
+					  string=string+"</tr></table>";
 			  $("#tabele").append(
 					  $.parseHTML(string));
 			  }

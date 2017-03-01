@@ -1,6 +1,10 @@
 package proj.beans.domain;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PonudaOutMessage {
 	
@@ -11,7 +15,13 @@ public class PonudaOutMessage {
 	private ArrayList<Jelo> jelo;
 	private ArrayList<Pice> pice;
 	private boolean prihvacen;
-	public PonudaOutMessage(Ponuda a, Restoran restorani) {
+	private boolean accepted;
+	private boolean istekaoRok;
+	public PonudaOutMessage(Ponuda a, Restoran restorani) throws ParseException {
+		DateFormat df= new SimpleDateFormat("yyyy-MM-dd");
+		Date date=df.parse(a.getDo());
+		if(new Date().after(date))setIstekaoRok(true);
+		else setIstekaoRok(false);
 		if(a.getPrihvacenaPonuda()!=null)setPrihvacen(true);
 		else setPrihvacen(false);
 		id=a.getId();
@@ -87,6 +97,18 @@ public class PonudaOutMessage {
 	}
 	public void setPrihvacen(boolean prihvacen) {
 		this.prihvacen = prihvacen;
+	}
+	public boolean isAccepted() {
+		return accepted;
+	}
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
+	}
+	public boolean isIstekaoRok() {
+		return istekaoRok;
+	}
+	public void setIstekaoRok(boolean istekaoRok) {
+		this.istekaoRok = istekaoRok;
 	}
 	private String restoran;
 	private ArrayList<PonudaPonudjaca> ponude;
