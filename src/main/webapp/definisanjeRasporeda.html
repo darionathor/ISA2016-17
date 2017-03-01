@@ -82,7 +82,6 @@
 				url : "api/vrstaZaposlenog/"+$("#selekt").val(),
 				dataType : "json",
 				success : function(data) {
-					alert(data);
 					console.log(data);
 					if(data==='konobar')
 						$(".chbox").disable();

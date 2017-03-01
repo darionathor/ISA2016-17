@@ -2,6 +2,7 @@ package proj.beans.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import proj.beans.domain.Jelo;
+import proj.beans.domain.Ocena;
+import proj.beans.domain.Pice;
+import proj.beans.domain.Poseta;
+import proj.beans.domain.Restoran;
 import proj.beans.domain.StringMessage;
 import proj.beans.domain.User;
 import proj.beans.domain.UserType;
@@ -35,8 +41,84 @@ public class UserController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/api")
-    public String welcome() {//Welcome page, non-rest
-        return "Welcome to RestTemplate Example.";
+    public String welcome() throws Exception {//Welcome page, non-rest
+        User user= new User();
+        user.setPassword("admin");
+        user.setUsername("admin");
+        user.setType(UserType.MenadzerSistema);
+        userService.create(user);
+        user=new User();
+        user.setPassword("Mile");
+        user.setUsername("mile");
+        user.setType(UserType.Gost);
+        user.setIme("Ime");
+        User gost=userService.create(user);
+        user=new User();
+        
+        user.setPassword("Djole");
+        user.setUsername("djole");
+        user.setType(UserType.Gost);
+        userService.create(user);
+    	
+        Restoran restoran = new Restoran();
+        restoran.setNaziv("Naziv");
+        restoran.setVrsta("vrsta");
+        user=new User();
+        
+        user.setPassword("Menadzer");
+        user.setUsername("menadzer");
+        user.setType(UserType.MenadzerRestorana);
+        restoran.setMenadzer(userService.create(user).getId());
+        ArrayList<String> radnici=new ArrayList<String>();
+        user=new User();
+        
+        user.setPassword("Konobar");
+        user.setUsername("konobar");
+        user.setVelicinaObuce(5);
+        user.setKonfekcijskiBroj(4);
+        user.setIme("Aca Lukas");
+        user.setPrezime("Prvi");
+        user.setType(UserType.Konobar);        
+        User konobar=userService.create(user);
+        radnici.add(konobar.getId());
+        ArrayList<Jelo> jelo=new ArrayList<Jelo>();
+        ArrayList<Pice> pice=new ArrayList<Pice>();
+        Jelo jel= new Jelo();
+        jel.setNaziv("a");
+        jel.setOpis("a");
+        jel.setCena(5);
+        jel.setId("1");
+        jelo.add(jel);
+        Pice pic=new Pice();
+
+        pic.setNaziv("p");
+        pic.setOpis("d");
+        pic.setCena(6);
+        pic.setId("2");
+        pice.add(pic);
+
+        restoran.setJelovnik(jelo);
+        restoran.setKartaPica(pice);
+        restoran.setRadnici(radnici);
+        restoran=restoranService.create(restoran);
+        Poseta p= new Poseta();
+        p.setDatum(new java.util.Date(117,2,1));
+        p.setKonobar(konobar.getId());
+        p.setUser(gost.getId());
+        p.setRestoran(restoran.getId());
+        Ocena o=new Ocena();
+        o.setOcenaJela(3);
+        o.setOcenaRestorana(3);
+        o.setOcenaUsluge(3);
+        p.setOcena(o);
+        ArrayList<String> al= new ArrayList<String>();
+        al.add(jel.getId());
+        p.setNarucenaJela(al);
+        p.setNarucenaPica(new ArrayList<String>());
+        
+        posetaService.create(p);
+    	return "Base set up complete";
+        
     }
 	@Autowired
 	private UserService userService;

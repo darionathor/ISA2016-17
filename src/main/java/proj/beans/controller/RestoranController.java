@@ -144,6 +144,7 @@ public class RestoranController {
 		double sum=0;
 		double count=0;
 		for(Poseta pos:posete){
+			if(restorani!=null)
 			if(pos.getRestoran().equals(restorani.getId())){
 				sum+=pos.getOcena().getOcenaRestorana();
 				count++;
@@ -351,6 +352,7 @@ public class RestoranController {
 		Collection<Poseta> sve= posetaService.findAll();
 		for(Poseta p:sve){
 			int index=p.getDatum().getDay();
+			System.out.println(p.getDatum().toString());
 			int val=rr.get(index);
 			rr.set(index, val+1);
 		}
