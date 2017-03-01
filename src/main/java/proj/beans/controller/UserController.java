@@ -281,10 +281,12 @@ public class UserController {
 			value = "/api/guestLogin",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public RedirectView guestLogin(
+	public StringMessage guestLogin(
 			@RequestBody User user, HttpServletResponse response,HttpSession session) throws Exception {
 		logger.info("> guestLogin");
-		
+
+		StringMessage out= new StringMessage();
+		out.setString("failed");
 		user.setType(UserType.Gost);
 		Iterator<User> it = userService.findAll().iterator();
 		while(it.hasNext()){
@@ -293,14 +295,56 @@ public class UserController {
 				if(use.getPassword().equals(user.getPassword())){
 					System.out.println("ziv je, ziiiiv");
 					session.setAttribute("user", use.getId());
+					out.setString("success");
+					if(user.getPassword().equals(""))out.setString("first");
 				}
 			}
 				
 			
 		}
 		logger.info("< guestLogin");
-
-        return new RedirectView("");
+        return out;
+	}@RequestMapping(
+			value = "/api/guestChangePassword",
+			method = RequestMethod.POST,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StringMessage guestChangePassword(
+			@RequestBody User user, HttpServletResponse response,HttpSession session) throws Exception {
+		logger.info("> guestChangePassword");
+		String id=(String)session.getAttribute("user");
+		StringMessage out= new  StringMessage();
+		User us=null;
+		if(id!=null)
+			us= userService.findOne(id);
+		if(us!=null && us.getType().equals(UserType.Ponudjac)){
+			us.setPassword(user.getPassword());
+			userService.update(us);
+		}
+		
+		logger.info("< guestLogin");
+        return out;
+	}
+	@RequestMapping(
+			value = "/api/editProfile",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StringMessage editProfile(
+			@RequestBody User user, HttpServletResponse response,HttpSession session) throws Exception {
+		logger.info("> guestChangePassword");
+		String id=(String)session.getAttribute("user");
+		StringMessage out= new  StringMessage();
+		User us=null;
+		if(id!=null)
+			us= userService.findOne(id);
+		if(us!=null && us.getType().equals(UserType.Ponudjac)){
+			us.setPassword(user.getPassword());
+			us.setUsername(user.getUsername());
+			us.setEmail(user.getEmail());
+			userService.update(us);
+		}
+		
+		logger.info("< guestLogin");
+        return out;
 	}
 	
 	

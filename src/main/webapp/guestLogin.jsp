@@ -51,9 +51,13 @@ function submita(){
 		        contentType: "application/json; charset=utf-8",
 		        dataType: "json",
 		        success: function(data){
-		        	alert(data);
-
-		        	window.location.replace("");
+		        	console.log(data);
+					if(data.string==='success')
+		        		window.location.replace("../Restoran");
+					if(data.string==='failed')
+						$('#fail').html("failed");
+					if(data.string==='first')
+						window.location.replace("../Restoran/first.html");	
 					 console.log(data);},
 		        failure: function(errMsg) {
 		            alert(errMsg);
@@ -64,6 +68,7 @@ function submita(){
 </script>
 </head>
 <body>
+<p id='fail'></p>
 	<form id="loginGost" onsubmit='submita(); return false;'>
 		<fieldset>
 			<label path="username">Username </label> <input type="text"

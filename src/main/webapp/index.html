@@ -12,6 +12,7 @@ function logout(){
 		success : function(data) {
 			//alert(data);
 			console.log(data);
+			location.reload();
 		},
 		failure : function(errMsg) {
 			alert(errMsg);
@@ -22,17 +23,7 @@ function logout(){
 <body>
 <script>
 $(document).ready(function() {
-	$.getJSON( "api/restorani", function( data ) {
-		  var items = [];
-		  $.each( data, function( key, val ) {
-			  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+" </a><br />";
-			  console.log(s);
-			  var t=$.parseHTML(s);
-			  console.log(t);
-			  $("#restorani").append(t);
-		  });
-		  console.log(items);
-		  });
+	
 	$.getJSON( "api/loggedUserType", function( data ) {
 			  var type=data.string;
 			  console.log(type);
@@ -41,6 +32,20 @@ $(document).ready(function() {
 							$.parseHTML(
 									"<a href='guestLogin.jsp'>Login</a><br />"));
 				  
+			  }else{
+					$("#res").append(
+							$.parseHTML("<p id='restorani'>Restorani:</p>"));
+				  $.getJSON( "api/restorani", function( data ) {
+					  var items = [];
+					  $.each( data, function( key, val ) {
+						  var s="<a href='Restoran.html?id="+val.id+"'>"+val.naziv+" </a><br />";
+						  console.log(s);
+						  var t=$.parseHTML(s);
+						  console.log(t);
+						  $("#restorani").append(t);
+					  });
+					  console.log(items);
+					  });
 			  }
 			  if(type==='gost'){
 				  $("#linkovi").append(
@@ -87,6 +92,8 @@ $(document).ready(function() {
 									"<button onclick=logout()>Odjava</button>"));
 				  $("#linkovi").append(
 							$.parseHTML("<a href='svePorudzbine.html'>Sve porudzbine</a><br />"));
+				  $("#linkovi").append(
+							$.parseHTML("<a href='editProfile.html'>Izmeni profil</a><br />"));
 				  
 			  }
 			  });	
@@ -97,6 +104,6 @@ $(document).ready(function() {
 	<a href="radniKalendarKonobara.html">Radni kalendar konobara</a><br />
 	<a href="rasporedStolova.html">Raspored stolova</a><br />
 	</p>
-	<p id="restorani">Restorani:</p>
+	<div id="res"></div>
 </body>
 </html>

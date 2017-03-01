@@ -65,6 +65,7 @@ private Logger logger = LoggerFactory.getLogger(this.getClass());
         }
         userToUpdate.setPassword(user.getPassword());
         userToUpdate.setEmail(user.getEmail());
+        userToUpdate.setUsername(user.getUsername());
         
         User updatedUser = userRepository.save(userToUpdate);
         logger.info("< update id:{}", user.getId());
