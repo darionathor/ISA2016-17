@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>        
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="Chart.js"></script>     
 <title>izvestaji Restorana</title>
 <script type="text/javascript">
 $.fn.serializeObject = function() {
@@ -20,6 +21,53 @@ $.fn.serializeObject = function() {
 };
 
 function validate() {
+	
+}
+function prihodi() {
+	var qs = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=', 2);
+	        if (p.length == 1)
+	            b[p[0]] = "";
+	        else
+	            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'));
+		var a = $('#prihodi');
+		console.log(a);
+		var o = {};
+		var a = a.serializeArray();
+		console.log(a);
+		$.each(a, function() {
+			if (o[this.name] !== undefined) {
+				if (!o[this.name].push) {
+					o[this.name] = [ o[this.name] ];
+				}
+				o[this.name].push(this.value || '');
+			} else {
+				o[this.name] = this.value || '';
+			}
+		});
+		json = JSON.stringify(o);
+		console.log(json);
+		$.ajax({
+			type : "POST",
+			url : "api/prihodiRestorana/"+qs["id"],	
+			data : json,
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			success : function(data) {
+				console.log(data);
+				$("#prih").html(data.string);
+			},
+			failure : function(errMsg) {
+				alert(errMsg);
+			}
+		});
 }
 </script>
 </head>
@@ -54,6 +102,60 @@ $(document).ready(function() {
 					  }
 					  );
 				  });
+			$.getJSON( "api/oceneKonobara/"+qs["id"], function( data ) {
+						console.log(data);
+						  $.each(data,function(key,val){
+						  
+						 	 $("#konobari").append(
+								  $.parseHTML("<tr><td>"+val.ime+"</td><td>"+val.prezime+"</td><td>"+val.prihod+"</td><td>"+
+								  val.ocena+"</td></tr>"));
+						 	 
+						  }
+						  );
+					  });
+			$.getJSON( "api/PosecenostRestorana/"+qs["id"], function( data ) {
+				console.log(data);
+				var ctx = $("#posete");
+				var myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: ["Nedelja","Ponedeljak", "Utorak", "Sreda", "Cetvrtak", "Petak", "Subota"],
+				        datasets: [{
+				            label: '# poseta',
+				            data: data,
+				            backgroundColor: [
+				                'rgba(255, 99, 132, 0.2)',
+				                'rgba(54, 162, 235, 0.2)',
+				                'rgba(255, 206, 86, 0.2)',
+				                'rgba(75, 192, 192, 0.2)',
+				                'rgba(153, 102, 255, 0.2)',
+				                'rgba(255, 159, 64, 0.2)',
+				                'rgba(255, 159, 64, 0.2)'
+				            ],
+				            borderColor: [
+				                'rgba(255,99,132,1)',
+				                'rgba(54, 162, 235, 1)',
+				                'rgba(255, 206, 86, 1)',
+				                'rgba(75, 192, 192, 1)',
+				                'rgba(153, 102, 255, 1)',
+				                'rgba(255, 159, 64, 1)',
+				                'rgba(255, 159, 64, 1)'
+				            ],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
+				
+				  });
 		}
 	});
 	
@@ -71,9 +173,28 @@ $(document).ready(function() {
 		</tr>
 	</table>
 </div>
-<div id="konfigSedenja"></div>
-<div id="linkovi">
-
+<div id="prihodi za period">
+	
+	<form id="prihodi" onsubmit='prihodi(); return false;'>
+		<fieldset>
+			<label path="odDatuma">Od</label>
+			 <input type="date"
+				id="odDatuma" name="odDatuma" />
+			<label path="doDatum">Do</label>
+			<input type="date" id="doDatuma" name="doDatuma" />
+		</fieldset>
+		<p>
+			<input type="submit" value="upitaj">
+		</p>
+	</form>
+	<p id="prih"></p>
+</div>
+<div>
+<table id="konobari"></table>
+</div>
+<div>
+<p>Posete: </p>
+<canvas id='posete' width='300' height='300'></canvas>
 </div>
 </body>
 </html>

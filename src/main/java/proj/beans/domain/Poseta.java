@@ -15,6 +15,7 @@ public class Poseta {
 	private String restoran;
 	private String sto;
 	private Ocena ocena;
+	private String konobar;
 	public String getId() {
 		return id;
 	}
@@ -62,5 +63,11 @@ public class Poseta {
 	}
 	public void setOcena(Ocena ocena) {
 		this.ocena = ocena;
+	}
+	public String getKonobar() {
+		return konobar;
+	}
+	public void setKonobar(String konobar) {
+		this.konobar = konobar;
 	}
 }
